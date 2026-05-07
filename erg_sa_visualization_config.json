@@ -1,0 +1,150 @@
+{
+  "metadata": {
+    "company": "ERG S.A.",
+    "purpose": "Visualization and layout configuration for HTML storytelling",
+    "data_file": "erg_sa_data.json",
+    "storytelling_file": "erg_sa_storytelling.json"
+  },
+  "page_structure": [
+    {
+      "section_id": "hero",
+      "component": "hero_summary"
+    },
+    {
+      "section_id": "cfo_first",
+      "component": "kpi_cards"
+    },
+    {
+      "section_id": "cash_mechanism",
+      "component": "bridge_and_table"
+    },
+    {
+      "section_id": "working_capital",
+      "component": "driver_cards"
+    },
+    {
+      "section_id": "ccc",
+      "component": "kpi_table"
+    },
+    {
+      "section_id": "profitability",
+      "component": "trend_and_margin_table"
+    },
+    {
+      "section_id": "liquidity_debt",
+      "component": "risk_table"
+    },
+    {
+      "section_id": "red_flags",
+      "component": "red_flags_list"
+    },
+    {
+      "section_id": "data_requests",
+      "component": "data_request_table"
+    }
+  ],
+  "visualizations": [
+    {
+      "id": "ebitda_vs_cfo",
+      "title": "EBITDA vs CFO",
+      "type": "bar_line_chart",
+      "data_path": "calculated_metrics.ebitda_cfo",
+      "x": "year",
+      "bar_series": [
+        "ebitda"
+      ],
+      "line_series": [
+        "cfo"
+      ],
+      "unit": "PLN thousands",
+      "insight_ref": "cfo_first"
+    },
+    {
+      "id": "cash_flow_sales_bridge",
+      "title": "Cash Flow Sales",
+      "type": "bridge",
+      "data_path": "calculated_metrics.cash_flow_sales",
+      "fields": [
+        "ebit",
+        "delta_kon",
+        "cash_flow_sales"
+      ],
+      "unit": "PLN thousands",
+      "insight_ref": "cash_flow_sales"
+    },
+    {
+      "id": "cfo_bridge_2025",
+      "title": "EBITDA to CFO Bridge — 2025",
+      "type": "waterfall",
+      "data_path": "calculated_metrics.cfo_bridge_2025",
+      "unit": "PLN thousands",
+      "insight_ref": "cfo_bridge"
+    },
+    {
+      "id": "ccc_drivers",
+      "title": "Cash Conversion Cycle Drivers",
+      "type": "kpi_table",
+      "data_path": "calculated_metrics.ccc",
+      "columns": [
+        "year",
+        "dso_days",
+        "dio_days",
+        "dpo_days",
+        "ccc_days"
+      ],
+      "unit": "days",
+      "insight_ref": "ccc"
+    },
+    {
+      "id": "profitability_margins",
+      "title": "Profitability Margins",
+      "type": "line_chart",
+      "data_path": "calculated_metrics.profitability",
+      "x": "year",
+      "series": [
+        "ebitda_margin",
+        "ebit_margin",
+        "net_margin"
+      ],
+      "unit": "percent",
+      "insight_ref": "profitability"
+    },
+    {
+      "id": "liquidity_debt_table",
+      "title": "Liquidity & Debt",
+      "type": "metric_table",
+      "data_path": "calculated_metrics.liquidity_debt",
+      "columns": [
+        "year",
+        "current_ratio",
+        "quick_ratio",
+        "cash_ratio",
+        "debt_to_equity",
+        "debt_to_assets"
+      ],
+      "insight_ref": "liquidity_debt"
+    }
+  ],
+  "style_guidelines": {
+    "tone": "professional CFO analysis, minimal, cash-first",
+    "colors": {
+      "positive": "#0F766E",
+      "negative": "#B91C1C",
+      "neutral": "#334155",
+      "background": "#F8FAFC",
+      "card": "#FFFFFF"
+    },
+    "avoid": [
+      "too many charts",
+      "decorative dashboard look",
+      "random colors",
+      "3D charts"
+    ],
+    "preferred_components": [
+      "cards",
+      "simple tables",
+      "bridge/waterfall",
+      "short CFO insights"
+    ]
+  }
+}

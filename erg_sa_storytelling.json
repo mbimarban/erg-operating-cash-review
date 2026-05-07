@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "company": "ERG S.A.",
+    "story_type": "CFO cash-first storytelling",
+    "period": "2023-2025",
+    "business_context": "ERG S.A. is a manufacturing company producing polyethylene films. The core CFO question is whether production, inventory and receivables convert into cash."
+  },
+  "executive_snapshot": {
+    "headline": "ERG improved cash flow in 2025, but profitability remains weak.",
+    "key_message": "The 2025 cash recovery was driven mainly by working capital release, supplier financing and price effects, not by structural margin improvement.",
+    "summary_points": [
+      "CFO rebounded strongly in 2025 to PLN 6.9m despite near-zero net profit.",
+      "CCC improved from 83 to 68 days, mainly through lower DIO and higher DPO.",
+      "DSO deteriorated from 46 to 51 days, meaning the company financed customers for longer.",
+      "COGS consumed 86.4% of revenue in 2025, showing continued margin pressure.",
+      "Liquidity and leverage look stable; the problem is operational, not financial distress."
+    ]
+  },
+  "sections": [
+    {
+      "id": "cfo_first",
+      "title": "CFO-first view: EBITDA vs operating cash flow",
+      "insight": "ERG had positive EBITDA in every year, but CFO was highly volatile. This means the business has operating cash potential, but working capital management determines how much of it stays in the company.",
+      "flag": "mixed",
+      "supporting_metrics": [
+        "EBITDA 2025 = 5,069",
+        "CFO 2025 = 6,949",
+        "CFO/EBITDA 2025 = 1.37x"
+      ]
+    },
+    {
+      "id": "cash_flow_sales",
+      "title": "Cash Flow Sales: the mechanism behind cash recovery",
+      "insight": "Cash Flow Sales turned from negative PLN -6.0m in 2024 to positive PLN 2.7m in 2025. The key driver was the reversal of working capital pressure.",
+      "flag": "positive",
+      "supporting_metrics": [
+        "CFS 2024 = -6,044",
+        "CFS 2025 = 2,742",
+        "ΔKON 2025 = -2,190"
+      ]
+    },
+    {
+      "id": "working_capital",
+      "title": "Working capital: inventory and suppliers drove the change",
+      "insight": "Inventory decreased and trade payables increased in 2025. This released cash and improved the cycle, while receivables moved in the opposite direction.",
+      "flag": "mixed",
+      "supporting_metrics": [
+        "Inventory 2024 = 14,304",
+        "Inventory 2025 = 12,841",
+        "Trade payables 2024 = 7,872",
+        "Trade payables 2025 = 9,794"
+      ]
+    },
+    {
+      "id": "prices_volume",
+      "title": "Price-volume effect: more volume, lower unit price",
+      "insight": "2025 looks like a year in which ERG sold more volume but at lower average prices. Therefore, part of the working capital improvement may reflect price effects, not only operational excellence.",
+      "flag": "important_context",
+      "supporting_metrics": [
+        "Revenue 2025 growth = +1.1%",
+        "COGS 2025 growth = +1.6%"
+      ]
+    },
+    {
+      "id": "ccc",
+      "title": "Cash Conversion Cycle: better, but not perfect",
+      "insight": "CCC shortened from 83 to 68 days. This is positive, but DSO deterioration is a warning sign because customers pay more slowly.",
+      "flag": "positive_with_warning",
+      "supporting_metrics": [
+        "DSO 46 → 51 days",
+        "DIO 82 → 73 days",
+        "DPO 45 → 56 days",
+        "CCC 83 → 68 days"
+      ]
+    },
+    {
+      "id": "profitability",
+      "title": "Profitability: margin pressure remains the core issue",
+      "insight": "The company improved cash flow, but not the structural margin profile. COGS as a percentage of revenue increased and net profit remained near zero.",
+      "flag": "negative",
+      "supporting_metrics": [
+        "COGS % revenue 2025 = 86.4%",
+        "EBIT margin 2025 = 0.7%",
+        "Net margin 2025 = -0.1%"
+      ]
+    },
+    {
+      "id": "liquidity_debt",
+      "title": "Liquidity and debt: no immediate financial distress",
+      "insight": "Current ratio improved and debt ratios declined. ERG does not look financially distressed; its key issues are operational and margin-related.",
+      "flag": "positive",
+      "supporting_metrics": [
+        "Current ratio 2025 = 1.79",
+        "Debt/Equity 2025 = 0.69",
+        "Debt/Assets 2025 = 0.41"
+      ]
+    }
+  ],
+  "top_red_flags": [
+    {
+      "title": "Margin pressure",
+      "description": "COGS consumes a growing share of revenue, reaching 86.4% in 2025.",
+      "severity": "high"
+    },
+    {
+      "title": "Cash flow depends on working capital",
+      "description": "CFO recovery was driven by KON reduction and payables, not strong profitability.",
+      "severity": "high"
+    },
+    {
+      "title": "DSO deterioration",
+      "description": "DSO increased from 46 to 51 days, meaning receivables collection weakened.",
+      "severity": "medium"
+    },
+    {
+      "title": "Near-zero net profitability",
+      "description": "Net margin remained negative in 2025 despite operating cash recovery.",
+      "severity": "high"
+    },
+    {
+      "title": "Price and raw material cycle exposure",
+      "description": "Lower average prices and polymer/raw material cycles can distort both margins and working capital.",
+      "severity": "medium"
+    }
+  ],
+  "data_requests": [
+    {
+      "request": "AR aging",
+      "why": "To verify whether higher DSO is due to delayed customers or normal commercial terms."
+    },
+    {
+      "request": "AP aging",
+      "why": "To check if higher DPO is sustainable or simply delayed payments."
+    },
+    {
+      "request": "Inventory aging / obsolescence",
+      "why": "To assess whether inventory reduction reflects healthy rotation or write-down risk."
+    },
+    {
+      "request": "COGS breakdown",
+      "why": "To separate polymer/raw material, energy, labor and overhead pressure."
+    },
+    {
+      "request": "Debt maturity schedule",
+      "why": "To confirm there is no refinancing pressure despite stable leverage."
+    }
+  ],
+  "final_assessment": {
+    "classification": "operational turnaround / cash recovery, not structural profitability recovery",
+    "one_sentence": "ERG improved cash flow in 2025, but the main CFO question remains whether it can convert production into cash without sacrificing margins."
+  }
+}

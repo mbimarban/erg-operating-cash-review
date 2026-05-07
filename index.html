@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERG S.A. · Jak sprzedaż zamienia się w gotówkę?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ── DESIGN TOKENS ─────────────────────────────── */
+:root {
+  --bg:      #F8F7F4;
+  --bg2:     #F0EFE9;
+  --bg3:     #E6E4DC;
+  --text1:   #1E2A38;
+  --text2:   #4A5568;
+  --text3:   #8896A5;
+  --pos:     #4B7F52;
+  --pos-bg:  #EDF5EE;
+  --neg:     #A14B4B;
+  --neg-bg:  #F8EDED;
+  --warn:    #8F6D3D;
+  --warn-bg: #FAF3EA;
+  --border:  #E0DDD5;
+  --navy:    #1E2A38;
+  --slate:   #5A7EA6;
+  --nav-h:   58px;
+}
+
+/* ── RESET ──────────────────────────────────────── */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PROGRESS BAR ───────────────────────────────── */
+#progress {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: var(--navy); z-index: 300;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── DECK ───────────────────────────────────────── */
+.deck {
+  display: flex; height: 100vh;
+  will-change: transform;
+  transition: transform .46s cubic-bezier(.4,0,.2,1);
+}
+.slide {
+  min-width: 100vw; width: 100vw; height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding-bottom: var(--nav-h);
+}
+
+/* ── BOTTOM NAV ─────────────────────────────────── */
+#nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--bg); border-top: 1px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 28px; z-index: 200; gap: 12px;
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--border);
+  padding: 7px 16px; font-size: 12px; font-weight: 500;
+  color: var(--text1); cursor: pointer; font-family: inherit;
+  border-radius: 2px;
+  transition: background .18s, border-color .18s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nav-btn:hover { background: var(--bg2); border-color: var(--text3); }
+.nav-btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+.nav-center { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.nav-counter { font-size: 11px; font-weight: 600; color: var(--text3); font-variant-numeric: tabular-nums; }
+
+/* ── DOT NAVIGATION ─────────────────────────────── */
+#dots { display: flex; gap: 5px; align-items: center; }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); border: none; cursor: pointer;
+  padding: 0; flex-shrink: 0;
+  transition: background .22s, transform .22s, width .22s, border-radius .22s;
+}
+.dot.active { background: var(--navy); width: 18px; border-radius: 3px; }
+.dot:hover:not(.active) { background: var(--text3); }
+
+/* ── SLIDE HEADER ───────────────────────────────── */
+.sl-hd { padding: 26px 48px 14px; flex-shrink: 0; width: 100%; max-width: 1160px; }
+@media(max-width:768px) { .sl-hd { padding: 18px 24px 10px; } }
+.sl-tag {
+  display: block; font-size: 10px; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 5px;
+}
+.sl-title {
+  font-size: clamp(18px, 2.5vw, 28px);
+  font-weight: 600; line-height: 1.25; color: var(--text1);
+}
+.sl-sub { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+
+/* ── SLIDE BODY ─────────────────────────────────── */
+/* overflow-y:auto enables per-slide internal scrolling */
+.sl-body {
+  flex: 1; min-height: 0;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  padding: 0 48px 20px;
+  width: 100%; max-width: 1160px;
+  align-items: center;
+  overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(30,42,56,.12) transparent;
+}
+.sl-body::-webkit-scrollbar { width: 4px; }
+.sl-body::-webkit-scrollbar-track { background: transparent; }
+.sl-body::-webkit-scrollbar-thumb { background: rgba(30,42,56,.18); border-radius: 2px; }
+.sl-body::-webkit-scrollbar-thumb:hover { background: rgba(30,42,56,.35); }
+
+.sl-body.full  { grid-template-columns: 1fr; }
+.sl-body.wide  { grid-template-columns: 310px 1fr; }
+.sl-body.eq    { grid-template-columns: 1fr 1fr; }
+
+@media(max-width:900px) {
+  .sl-body, .sl-body.wide, .sl-body.eq { grid-template-columns: 1fr; }
+}
+@media(max-width:768px) {
+  .sl-body, .sl-body.full { padding: 0 24px 16px; }
+}
+
+.sl-left  { display: flex; flex-direction: column; gap: 11px; justify-content: center; }
+.sl-right { display: flex; flex-direction: column; gap: 8px; justify-content: center; align-items: center; }
+
+/* ── VISUAL CARD (chart wrapper) ────────────────── */
+.visual-card {
+  width: 100%; max-width: 680px;
+  padding: 14px 18px;
+  border: none;
+  background: transparent;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* ── CHART CONTAINERS ───────────────────────────── */
+/* Explicit heights ensure Chart.js renders reliably — kept smaller for breathing room */
+.chart-wrap { position: relative; height: 210px; overflow: hidden; flex-shrink: 0; }
+.chart-wrap.lg { height: 270px; }
+.chart-wrap.sm { height: 155px; }
+.chart-title {
+  font-size: 11px; font-weight: 600; color: var(--text2);
+  line-height: 1.4; flex-shrink: 0;
+}
+.chart-note {
+  font-size: 10px; color: var(--text3); line-height: 1.45;
+  flex-shrink: 0; padding-top: 4px; margin-top: 0;
+}
+
+/* ── INSIGHT BOXES ──────────────────────────────── */
+.insight {
+  border-left: 2px solid var(--navy); padding: 8px 14px;
+  background: transparent; font-size: 12.5px; color: var(--text2);
+  line-height: 1.6; flex-shrink: 0;
+}
+.insight strong { color: var(--text1); }
+.insight.pos { border-left-color: var(--pos); background: rgba(40,167,69,.04); }
+.insight.neg { border-left-color: var(--neg); background: rgba(192,57,43,.04); }
+.insight.warn { border-left-color: var(--warn); background: rgba(230,152,0,.04); }
+.insight-lbl {
+  display: block; font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text3); font-weight: 600; margin-bottom: 5px;
+}
+
+/* ── SIGNAL BOXES ───────────────────────────────── */
+.sig-box {
+  padding: 10px 14px; font-size: 12.5px; line-height: 1.55;
+  flex-shrink: 0;
+}
+.sig-box strong { font-weight: 600; display: block; margin-bottom: 2px; }
+.sig-box.pos { background: rgba(40,167,69,.06); }
+.sig-box.pos strong { color: var(--pos); }
+.sig-box.neg { background: rgba(192,57,43,.06); }
+.sig-box.neg strong { color: var(--neg); }
+.sig-box.warn { background: rgba(230,152,0,.06); }
+.sig-box.warn strong { color: var(--warn); }
+
+/* ── METRIC ROWS ────────────────────────────────── */
+.mrows { display: flex; flex-direction: column; flex-shrink: 0; }
+.mr {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.055); font-size: 12.5px;
+}
+.mr-l { color: var(--text2); }
+.mr-v { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text1); }
+.mr-v.pos { color: var(--pos); }
+.mr-v.neg { color: var(--neg); }
+.mr-v.wn  { color: var(--warn); }
+.mr.total {
+  font-weight: 700; font-size: 13px;
+  border-bottom: 2px solid var(--text1); border-top: 2px solid var(--text1); margin-top: -1px;
+}
+.mr.total .mr-l, .mr.total .mr-v { color: var(--text1); }
+
+/* ── SLIDE 1 — INTRO ────────────────────────────── */
+#s1 .sl-body.full { display: flex; align-items: center; justify-content: flex-start; }
+.hero-wrap { max-width: 820px; width: 100%; }
+.hero-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text3);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 12px;
+}
+.hero-badge::before { content:''; width: 24px; height: 1px; background: var(--text3); }
+.hero-co {
+  font-size: clamp(48px, 8vw, 86px); font-weight: 300;
+  letter-spacing: -2px; color: var(--text1); line-height: 1; margin-bottom: 4px;
+}
+.hero-co em { font-style: normal; font-weight: 700; }
+.hero-period { font-size: 13px; color: var(--text3); margin-bottom: 26px; letter-spacing: .5px; }
+.hero-rule { width: 36px; height: 2px; background: var(--text1); margin-bottom: 22px; }
+.hero-q { font-size: clamp(18px, 2.6vw, 25px); font-weight: 500; color: var(--text2); line-height: 1.35; margin-bottom: 18px; }
+.hero-thesis { font-size: 14.5px; color: var(--text2); line-height: 1.75; max-width: 620px; margin-bottom: 28px; }
+.hero-thesis strong { color: var(--text1); font-weight: 600; }
+.hero-kpis { display: flex; border: 1px solid var(--border); max-width: 620px; }
+.hkpi { flex: 1; padding: 14px 16px; border-right: 1px solid var(--border); }
+.hkpi:last-child { border-right: none; }
+.hkpi-l { font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+.hkpi-v { font-size: 20px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 3px; }
+.hkpi-d { font-size: 11px; font-weight: 500; }
+.up { color: var(--pos); } .dn { color: var(--neg); } .wn { color: var(--warn); }
+.hero-hint { font-size: 11px; color: var(--text3); margin-top: 22px; display: flex; align-items: center; gap: 8px; }
+.hero-hint kbd {
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-family: inherit; font-weight: 600; color: var(--text2);
+  border: 1px solid var(--border); padding: 2px 6px; border-radius: 2px; background: white;
+}
+
+/* ── SLIDE 2 — KPI SNAPSHOT ─────────────────────── */
+#kpiGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%; max-width: 920px;
+  margin: 0 auto;
+  align-content: center;
+}
+@media(max-width:768px) { #kpiGrid { grid-template-columns: 1fr; } }
+
+/* How-to-read guide */
+.read-guide { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.rg-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 9px 12px; background: var(--bg2); border-left: 3px solid var(--border);
+}
+.rg-abbr {
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  min-width: 70px; flex-shrink: 0; line-height: 1.3; padding-top: 1px;
+  font-variant-numeric: tabular-nums;
+}
+.rg-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.rg-so { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.kcard {
+  background: transparent; border: none;
+  padding: 12px 0 10px; display: flex; flex-direction: column; gap: 4px;
+  position: relative;
+  border-top: 1px solid rgba(0,0,0,.07);
+}
+.kc-tag { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+.kc-val { font-size: 26px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; line-height: 1; }
+.kcard.k-pos .kc-val { color: var(--pos); }
+.kcard.k-neg .kc-val { color: var(--neg); }
+.kcard.k-warn .kc-val { color: var(--warn); }
+.kc-unit { font-size: 11px; color: var(--text3); margin-top: -3px; }
+.kc-signal { font-size: 12px; font-weight: 600; }
+.kc-explain {
+  font-size: 12px; color: var(--text2); line-height: 1.55;
+  border-top: 1px solid var(--border); padding-top: 8px;
+}
+.kc-biznes {
+  font-size: 11.5px; color: var(--text1); font-weight: 500; line-height: 1.5;
+  background: var(--bg2); padding: 7px 10px;
+  border-left: 2px solid var(--border);
+}
+
+/* ── WORKING CAPITAL VISUAL ─────────────────────── */
+.wc-item { margin-bottom: 16px; flex-shrink: 0; }
+.wc-lbl { font-size: 12px; font-weight: 600; color: var(--text1); margin-bottom: 3px; display: flex; align-items: center; gap: 7px; }
+.wc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.wc-desc { font-size: 11.5px; color: var(--text2); line-height: 1.45; margin-bottom: 7px; }
+.wc-bars { display: flex; flex-direction: column; gap: 3px; }
+.wc-bar-row { display: flex; align-items: center; gap: 8px; }
+.wc-yr { font-size: 10px; color: var(--text3); width: 30px; font-weight: 600; flex-shrink: 0; }
+.wc-track { flex: 1; height: 17px; background: var(--bg3); border-radius: 1px; overflow: hidden; }
+.wc-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; border-radius: 1px; }
+.wc-num { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.85); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ── CCC CYCLE VISUAL ───────────────────────────── */
+.ccc-flow { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; flex-shrink: 0; }
+.ccc-flow-lbl { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+.cycle-block { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-left: 3px solid; }
+.cycle-block.dso { border-left-color: var(--neg); background: var(--neg-bg); }
+.cycle-block.dio { border-left-color: var(--warn); background: var(--warn-bg); }
+.cycle-block.dpo { border-left-color: var(--pos); background: var(--pos-bg); }
+.cycle-v { font-size: 19px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; min-width: 52px; line-height: 1; }
+.cycle-v small { font-size: 10px; font-weight: 400; color: var(--text3); margin-left: 2px; }
+.cycle-info { flex: 1; }
+.cycle-name { font-size: 12px; font-weight: 600; color: var(--text1); }
+.cycle-desc { font-size: 11px; color: var(--text2); }
+.cycle-total {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 10px 12px; border-top: 2px solid var(--text1);
+  font-size: 12px; font-weight: 600; color: var(--text1);
+}
+.cycle-total-v { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cycle-total-v small { font-size: 12px; font-weight: 400; color: var(--text3); margin-left: 2px; }
+.ccc-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 2px;
+  display: inline-block; white-space: nowrap; flex-shrink: 0;
+}
+.ccc-badge.pos { background: var(--pos-bg); color: var(--pos); }
+.ccc-badge.neg { background: var(--neg-bg); color: var(--neg); }
+
+/* ── SIMULATOR ──────────────────────────────────── */
+.sim-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+@media(max-width:768px) { .sim-wrap { grid-template-columns: 1fr; } }
+.sim-ctrl-list { display: flex; flex-direction: column; gap: 20px; }
+.sc { display: flex; flex-direction: column; gap: 7px; }
+.sc-hd { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.sc-name { font-size: 13px; font-weight: 600; color: var(--text1); }
+.sc-val { font-size: 22px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; line-height: 1; white-space: nowrap; }
+.sc-val small { font-size: 12px; font-weight: 400; color: var(--text3); margin-left: 3px; }
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 3px; background: var(--border);
+  outline: none; border-radius: 2px; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 17px; height: 17px; background: var(--text1);
+  border-radius: 50%; cursor: pointer; transition: transform .18s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.sc-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); }
+.sim-results { display: flex; flex-direction: column; gap: 10px; }
+.sr-ccc { padding: 14px 0; background: transparent; }
+.sr-ccc-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); font-weight: 600; margin-bottom: 6px; }
+.sr-ccc-val { font-size: 38px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 4px; }
+.sr-ccc-d { font-size: 12px; font-weight: 500; }
+.sr-impact { padding: 0; }
+.sr-imp-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
+.sr-imp-total { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 10px; }
+.sr-rows { display: flex; flex-direction: column; gap: 4px; }
+.sr-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); padding: 4px 0; border-bottom: 1px solid var(--border); }
+.sr-row:last-child { border-bottom: none; }
+.sr-rv { font-weight: 600; font-variant-numeric: tabular-nums; }
+.sr-narr { font-size: 12.5px; color: var(--text2); line-height: 1.65; padding: 4px 0; }
+.sr-narr strong { color: var(--text1); }
+.sr-narr.pos strong { color: var(--pos); }
+.sr-narr.neg strong { color: var(--neg); }
+
+/* ── RISK CARDS ─────────────────────────────────── */
+.risks-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+@media(max-width:900px) { .risks-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:600px) { .risks-grid { grid-template-columns: 1fr; } }
+.rcard { border: 1px solid var(--border); border-left: 4px solid; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.rcard.high { border-left-color: var(--neg); }
+.rcard.med  { border-left-color: var(--warn); }
+.rc-sev { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 5px; border-radius: 1px; display: inline-block; width: fit-content; }
+.rcard.high .rc-sev { background: var(--neg-bg); color: var(--neg); }
+.rcard.med  .rc-sev { background: var(--warn-bg); color: var(--warn); }
+.rc-t { font-size: 12.5px; font-weight: 600; color: var(--text1); }
+.rc-d { font-size: 11.5px; color: var(--text2); line-height: 1.5; }
+
+/* ── CONCLUSION ─────────────────────────────────── */
+.concl-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+@media(max-width:800px) { .concl-grid { grid-template-columns: 1fr; } }
+.cg-item { border: 1px solid var(--border); padding: 16px; }
+.cg-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin-bottom: 10px; display: block; }
+.cg-item.ok  .cg-lbl { color: var(--pos); }
+.cg-item.bad .cg-lbl { color: var(--neg); }
+.cg-item.act .cg-lbl { color: var(--warn); }
+.cg-list { display: flex; flex-direction: column; gap: 6px; }
+.cg-row { font-size: 12px; color: var(--text2); line-height: 1.45; padding-left: 12px; position: relative; }
+.cg-row::before { content:''; position: absolute; left: 0; top: 6px; width: 5px; height: 5px; border-radius: 50%; }
+.cg-item.ok  .cg-row::before { background: var(--pos); }
+.cg-item.bad .cg-row::before { background: var(--neg); }
+.cg-item.act .cg-row::before { background: var(--warn); }
+.verdict { border: 1px solid var(--text1); padding: 18px 22px; }
+.verdict-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
+.verdict-txt { font-size: 14px; color: var(--text2); line-height: 1.8; }
+.verdict-txt strong { color: var(--text1); font-weight: 600; }
+
+/* ── GLOSSARY ───────────────────────────────────── */
+.gl { border-bottom: 1px dashed var(--text3); cursor: help; font-weight: 500; }
+#gl-tip {
+  position: fixed; background: var(--navy); color: #fff;
+  padding: 9px 13px; font-size: 11.5px; line-height: 1.55;
+  max-width: 260px; border-radius: 2px; z-index: 500;
+  pointer-events: none; opacity: 0; transition: opacity .18s; display: none;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media(max-width:640px) {
+  .sl-hd { padding: 14px 20px 8px; }
+  .sl-body { padding: 0 20px 12px; gap: 20px; }
+  .hero-co { font-size: 44px; }
+  .hero-kpis { flex-wrap: wrap; }
+  .hkpi { min-width: 50%; }
+  .concl-grid { grid-template-columns: 1fr; }
+  #s2 .sl-body { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .sim-wrap { grid-template-columns: 1fr; }
+}
+
+/* ── SLIDE 2 — NARRATIVE STRIP ──────────────────── */
+.s2-intro {
+  font-size: 13px; color: var(--text2); line-height: 1.65;
+  border-left: 3px solid var(--navy); padding: 9px 14px;
+  background: var(--bg2); flex-shrink: 0;
+  max-width: 920px; width: 100%; margin: 0 auto;
+}
+.s2-intro strong { color: var(--text1); }
+.s2-strip {
+  flex-shrink: 0;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-top: 2px solid var(--navy);
+  padding: 10px 16px;
+  display: flex; align-items: flex-start; gap: 20px;
+  max-width: 920px; width: 100%; margin: 0 auto;
+}
+.s2-strip-lbl {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text3);
+  flex-shrink: 0; white-space: nowrap; padding-top: 2px;
+}
+.s2-strip-items {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+}
+.s2-si {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; color: var(--text2); line-height: 1.4;
+}
+.s2-si strong { color: var(--text1); }
+.s2-si.bad  { color: var(--neg); font-weight: 600; }
+.s2-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--navy); color: white;
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+}
+.s2-num.warn { background: var(--warn); }
+
+/* ── SLIDE 4 — CASH TIMELINE ────────────────────── */
+.cash-timeline {
+  display: flex; flex-direction: column; gap: 3px;
+  border-top: 1px solid var(--border); padding-top: 8px;
+}
+.ct-row {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 11.5px; color: var(--text2); line-height: 1.45;
+  padding: 5px 8px;
+}
+.ct-row.neg { background: var(--neg-bg); }
+.ct-row.pos { background: var(--pos-bg); }
+.ct-yr {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  min-width: 30px; flex-shrink: 0; padding-top: 1px;
+}
+.ct-txt strong { color: var(--text1); font-weight: 600; }
+
+/* ── SLIDE 2 — SCORE LIST ───────────────────────── */
+#s2 .sl-body { grid-template-columns: 1fr 210px; align-items: start; padding-top: 8px; }
+#kpiGrid { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.score-headline {
+  font-size: 14.5px; font-weight: 700; color: var(--text1); line-height: 1.5;
+  padding: 4px 0 10px; flex-shrink: 0;
+}
+.score-list { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.score-row {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 8px 12px;
+}
+.score-row.pos { background: rgba(40,167,69,.06); }
+.score-row.warn { background: rgba(230,152,0,.06); }
+.score-row.neg { background: rgba(192,57,43,.06); }
+.score-metric { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+.score-reading { font-size: 13px; font-weight: 600; color: var(--text1); line-height: 1.3; }
+.score-meaning { font-size: 11.5px; color: var(--text2); line-height: 1.45; }
+/* Compact KPI tile for right column */
+.kti {
+  background: transparent; border: none;
+  padding: 8px 0; position: relative;
+  display: flex; flex-direction: column; gap: 3px;
+  border-top: 1px solid rgba(0,0,0,.07);
+}
+.kti-tag  { font-size: 8.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+.kti-val  { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.kti.k-pos .kti-val { color: var(--pos); }
+.kti.k-neg .kti-val { color: var(--neg); }
+.kti.k-warn .kti-val { color: var(--warn); }
+.kti.k-neu .kti-val { color: var(--navy); }
+.kti-unit { font-size: 10px; color: var(--text3); margin-top: -2px; }
+.kti-sig  { font-size: 11px; font-weight: 600; }
+
+/* ── SLIDE 4 — CASH FLOW HERO ───────────────────── */
+.cash-flow-hero {
+  display: flex; align-items: stretch;
+  overflow: hidden; flex-shrink: 0; gap: 3px;
+}
+.cfh-item {
+  flex: 1; padding: 11px 10px; display: flex; flex-direction: column; gap: 3px;
+}
+.cfh-item.neg  { background: var(--neg-bg); }
+.cfh-item.warn { background: var(--warn-bg); }
+.cfh-item.pos  { background: var(--pos-bg); }
+.cfh-connector {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px; font-size: 16px; color: var(--text3);
+  flex-shrink: 0;
+}
+.cfh-lbl  { font-size: 8.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+.cfh-name { font-size: 12px; font-weight: 700; color: var(--text1); }
+.cfh-val  { font-size: 19px; font-weight: 700; color: var(--text1); font-variant-numeric: tabular-nums; line-height: 1; }
+.cfh-unit { font-size: 10px; color: var(--text3); margin-top: -2px; }
+.cfh-desc { font-size: 11px; color: var(--text2); line-height: 1.35; margin-top: 2px; }
+.three-step { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.ts-row {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 7px 10px; font-size: 12px; color: var(--text2); line-height: 1.45;
+  background: transparent;
+}
+.ts-row.neg { background: rgba(192,57,43,.05); }
+.ts-row.pos { background: rgba(40,167,69,.05); }
+.ts-yr { font-size: 11px; font-weight: 700; color: var(--text3); min-width: 30px; flex-shrink: 0; padding-top: 1px; }
+.ts-txt strong { color: var(--text1); font-weight: 600; }
+
+/* ── SLIDE 4 LAYOUT OVERRIDES ────────────────────── */
+#s4 .sl-body { grid-template-columns: 420px 1fr; align-items: start; }
+.cfh-item { padding: 7px 9px !important; gap: 2px !important; }
+/* Slide 4 Magazyn-hero layout */
+.cfh-item.hero {
+  flex: 1.8;
+  border: 2px solid var(--neg) !important;
+  background: rgba(192,57,43,.06) !important;
+}
+.cfh-item.hero .cfh-lbl  { color: var(--neg) !important; }
+.cfh-item.hero .cfh-val  { font-size: 24px !important; color: var(--neg) !important; line-height: 1 !important; }
+.cfh-item.hero .cfh-name { font-size: 13px !important; font-weight: 800 !important; }
+.slide-headline {
+  font-size: 15.5px; font-weight: 700; color: var(--navy);
+  margin: 6px 0 0; line-height: 1.35;
+  padding-left: 12px; border-left: 3px solid var(--pos);
+}
+.slide-headline em { font-style: normal; color: var(--neg); }
+.cfh-badge {
+  display: inline-block; margin-top: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: .5px;
+  color: var(--neg); background: rgba(192,57,43,.1);
+  padding: 2px 7px; border-radius: 3px;
+}
+.cfh-item.secondary .cfh-val  { font-size: 14px !important; }
+.cfh-item.secondary .cfh-name { font-size: 11px !important; }
+.cfh-item.secondary { opacity: .72; }
+.cfh-val  { font-size: 17px !important; }
+.cfh-desc { font-size: 10.5px !important; }
+.three-step { gap: 2px !important; }
+.ts-row { padding: 5px 9px !important; font-size: 11.5px !important; }
+#s4 .insight { padding: 8px 12px; }
+#s4 .visual-card { max-width: 500px; }
+#s4 .chart-wrap { height: 172px !important; }
+
+/* Mini compare (Slide 4 chart annotation) */
+.mini-compare {
+  display: flex; align-items: center; gap: 6px;
+  border-top: 1px solid var(--border); padding-top: 7px; margin-top: 2px;
+}
+.mc-item {
+  flex: 1; display: flex; align-items: center; gap: 5px;
+  padding: 5px 8px; font-size: 10.5px; font-weight: 600; border-radius: 1px;
+}
+.mc-item.neg { background: var(--neg-bg); color: var(--neg); }
+.mc-item.pos { background: var(--pos-bg); color: var(--pos); }
+.mc-yr   { font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.mc-icon { font-size: 13px; }
+.mc-txt  { font-size: 10px; font-weight: 500; }
+.mc-arrow { font-size: 14px; color: var(--text3); flex-shrink: 0; }
+
+/* ── GLOBAL POLISH ────────────────────────────────── */
+/* Stronger headline hierarchy */
+.sl-title { font-size: clamp(20px, 2.8vw, 30px) !important; font-weight: 700 !important; letter-spacing: -.3px !important; }
+/* Smoother slide transitions */
+.slide { transition: opacity .3s ease; }
+/* Visual card — less heavy border */
+.visual-card { border-color: rgba(0,0,0,.07) !important; background: rgba(255,255,255,.4) !important; }
+/* Insight: no heavy box, keep border-left only for base variant */
+.insight:not(.pos):not(.neg):not(.warn) { background: transparent; border-left-width: 2px; }
+
+/* ── SLIDE 9 MEMO STYLE ──────────────────────────── */
+.memo-para {
+  border-left: 3px solid var(--border);
+  padding: 9px 13px; margin-bottom: 0;
+  font-size: 12.5px; color: var(--text2); line-height: 1.65;
+}
+.memo-para.neg  { border-left-color: var(--neg); }
+.memo-para.warn { border-left-color: var(--warn); }
+.memo-label {
+  display: block; font-size: 9px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 5px;
+}
+.memo-para strong { color: var(--text1); }
+
+/* ── UTILS ──────────────────────────────────────── */
+.txt-pos { color: var(--pos) !important; }
+.txt-neg { color: var(--neg) !important; }
+.txt-warn { color: var(--warn) !important; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ══════════════════════════════════════════════
+     PRESENTATION DECK
+══════════════════════════════════════════════ -->
+<div class="deck" id="deck">
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 1 — INTRO
+──────────────────────────────────────────────── -->
+<div class="slide" id="s1">
+  <div class="sl-hd">
+    <span class="sl-tag">Analiza gotówki · Biznes produkcyjny</span>
+  </div>
+  <div class="sl-body full">
+    <div class="hero-wrap">
+      <div class="hero-badge">ERG S.A. · 2023–2025</div>
+      <div class="hero-co"><em>ERG</em> S.A.</div>
+      <div class="hero-period">Analiza CFO 2023–2025 · Wartości w tys. PLN</div>
+      <div class="hero-rule"></div>
+      <div class="hero-q">Jak sprzedaż zamienia się&nbsp;w&nbsp;gotówkę?</div>
+      <p class="hero-thesis">
+        W 2025 roku ERG miał więcej gotówki — ale głównie dlatego, że
+        <strong>mniej pieniędzy było zamrożone w magazynie i obiegu handlowym</strong>.
+        Nie dlatego, że firma stała się znacznie bardziej rentowna.
+        To ważna różnica dla każdego, kto zarządza biznesem produkcyjnym.
+      </p>
+      <div class="hero-kpis">
+        <div class="hkpi">
+          <div class="hkpi-l">CFO 2025</div>
+          <div class="hkpi-v">6 949</div>
+          <div class="hkpi-d up">↑ odbudowa z −1 128</div>
+        </div>
+        <div class="hkpi">
+          <div class="hkpi-l">EBITDA 2025</div>
+          <div class="hkpi-v">5 069</div>
+          <div class="hkpi-d up">↑ +32,4%</div>
+        </div>
+        <div class="hkpi">
+          <div class="hkpi-l">Marża netto</div>
+          <div class="hkpi-v" style="color:var(--neg)">−0,1%</div>
+          <div class="hkpi-d dn">blisko zera</div>
+        </div>
+        <div class="hkpi">
+          <div class="hkpi-l">CCC 2025</div>
+          <div class="hkpi-v">68&nbsp;dni</div>
+          <div class="hkpi-d up">↓ z 83 dni</div>
+        </div>
+      </div>
+      <div class="hero-hint">
+        Nawigacja:&nbsp;<kbd>←</kbd>&nbsp;<kbd>→</kbd>&nbsp;lub przyciski poniżej
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 2 — EXECUTIVE SNAPSHOT
+──────────────────────────────────────────────── -->
+<div class="slide" id="s2">
+  <div class="sl-hd">
+    <span class="sl-tag">01 · Podsumowanie</span>
+    <h2 class="sl-title">Czy poprawa gotówki ERG jest trwała?</h2>
+  </div>
+  <div class="sl-body">
+    <div class="sl-left">
+      <div class="score-headline">Gotówka wróciła — ale jakość tej poprawy jest mieszana.</div>
+      <div class="score-list">
+        <div class="score-row pos">
+          <div class="score-metric">CFO · Przepływ operacyjny</div>
+          <div class="score-reading">6 949 tys. PLN — odbudowa z −1 128 tys. (2024)</div>
+          <div class="score-meaning">Realna gotówka wróciła na konto. Firma ma czym płacić zobowiązania.</div>
+        </div>
+        <div class="score-row pos">
+          <div class="score-metric">EBITDA · Potencjał operacyjny</div>
+          <div class="score-reading">5 069 tys. PLN — wzrost +32,4% rok do roku</div>
+          <div class="score-meaning">Działalność operacyjna generuje nadwyżkę. Biznes żyje i się kręci.</div>
+        </div>
+        <div class="score-row pos">
+          <div class="score-metric">Cash Flow Sales · Jakość sprzedaży</div>
+          <div class="score-reading">+2 742 tys. PLN — odwrócenie z −6 044 tys. (2024)</div>
+          <div class="score-meaning">Każda złotówka sprzedaży znów zostawia gotówkę. Po roku drenaży — przełom.</div>
+        </div>
+      </div>
+      <div class="insight neg">
+        <span class="insight-lbl">Zastrzeżenie — marża netto bliska zera</span>
+        Marża netto = −0,1%. Poprawa gotówkowa wynika z uwolnienia kapitału obrotowego,
+        nie ze wzrostu rentowności. <strong>Wystarczy wzrost cen surowców lub pogorszenie DSO,
+        żeby CFO znów zjechał do zera.</strong>
+      </div>
+    </div>
+    <div id="kpiGrid"><!-- built by buildKPIs() --></div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 3 — EBITDA vs CFO
+──────────────────────────────────────────────── -->
+<div class="slide" id="s3">
+  <div class="sl-hd">
+    <span class="sl-tag">02 · Zysk vs Gotówka</span>
+    <h2 class="sl-title"><span class="gl" data-gl="ebitda">EBITDA</span> = potencjał. <span class="gl" data-gl="cfo">CFO</span> = gotówka, która naprawdę zostaje.</h2>
+  </div>
+  <div class="sl-body">
+    <div class="sl-left">
+      <p style="font-size:13px;color:var(--text2);line-height:1.65">
+        Firma może „zarabiać" na papierze i jednocześnie
+        <strong>nie mieć gotówki</strong> — bo pieniądze utknęły
+        w magazynie lub czekają na zapłatę od klientów. Dlatego patrzymy na CFO, nie tylko na zysk.
+      </p>
+      <div class="sig-box neg">
+        <strong>2024 — gotówka wyparowała</strong>
+        Mimo EBITDA 3 828 tys., przepływ operacyjny wyniósł −1 128 tys. PLN.
+        Pieniądze zamrożono w zapasach — firma produkowała, ale gotówka nie wracała.
+      </div>
+      <div class="sig-box pos">
+        <strong>2025 — gotówka wróciła i przekroczyła EBITDA</strong>
+        CFO wzrósł do 6 949 tys. PLN — to o 1 880 tys. <em>więcej</em> niż samo EBITDA (5 069 tys.).
+        Kapitał obrotowy uwolnił dodatkową gotówkę.
+      </div>
+      <div class="mrows" style="font-size:12px">
+        <div class="mr"><span class="mr-l">CFO / EBITDA — 2023</span><span class="mr-v pos">0,72×</span></div>
+        <div class="mr"><span class="mr-l">CFO / EBITDA — 2024</span><span class="mr-v neg">−0,29×</span></div>
+        <div class="mr total"><span class="mr-l">CFO / EBITDA — 2025</span><span class="mr-v pos">1,37×</span></div>
+      </div>
+      <div class="insight warn">
+        <span class="insight-lbl">Kluczowa interpretacja</span>
+        Wskaźnik 1,37× w 2025 oznacza, że firma <strong>wygenerowała 37% więcej gotówki niż EBITDA</strong>.
+        Dobry wynik — ale wynika z uwolnienia kapitału obrotowego, nie ze wzrostu marży.
+      </div>
+    </div>
+    <div class="sl-right">
+      <div class="visual-card">
+        <div class="chart-title">EBITDA i gotówka operacyjna (CFO) — trzy lata, tys. PLN</div>
+        <div class="chart-wrap"><canvas id="cEbitdaCfo"></canvas></div>
+        <p class="chart-note">Słupki = EBITDA (potencjał) · Linia = CFO (realna gotówka) · 2024: CFO ujemny mimo dodatniego EBITDA</p>
+        <div class="insight warn" style="margin-top:2px">
+          <span class="insight-lbl">Wniosek</span>
+          ERG w 2025 wygenerował więcej gotówki niż EBITDA — ale głównie przez uwolnienie kapitału obrotowego, nie przez wzrost marży.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 4 — GDZIE UTKNĘŁA GOTÓWKA?
+──────────────────────────────────────────────── -->
+<div class="slide" id="s4">
+  <div class="sl-hd">
+    <span class="sl-tag">03 · Kapitał obrotowy</span>
+    <h2 class="sl-title">Gdzie fizycznie utknęła gotówka w 2024 roku?</h2>
+  </div>
+  <div class="sl-body">
+    <div class="sl-left">
+      <div class="cash-flow-hero">
+        <div class="cfh-item secondary neg">
+          <div class="cfh-lbl">Należności</div>
+          <div class="cfh-name">Klienci</div>
+          <div class="cfh-val">10 392</div>
+          <div class="cfh-unit">tys. PLN</div>
+        </div>
+        <div class="cfh-connector">→</div>
+        <div class="cfh-item hero">
+          <div class="cfh-lbl">Zapasy · szczyt 2024</div>
+          <div class="cfh-name">Magazyn</div>
+          <div class="cfh-val">14 304</div>
+          <div class="cfh-unit">tys. PLN</div>
+          <div class="cfh-badge">+55% · 5 mln PLN zamrożone</div>
+        </div>
+        <div class="cfh-connector">←</div>
+        <div class="cfh-item secondary pos">
+          <div class="cfh-lbl">Zobowiązania</div>
+          <div class="cfh-name">Dostawcy</div>
+          <div class="cfh-val">9 794</div>
+          <div class="cfh-unit">tys. PLN</div>
+        </div>
+      </div>
+      <div class="three-step">
+        <div class="ts-row neg">
+          <span class="ts-yr">2024</span>
+          <span class="ts-txt">Firma kupiła więcej surowców niż sprzedała. Gotówka utknęła w magazynie. CFO = <strong>−1 128 tys.</strong></span>
+        </div>
+        <div class="ts-row pos">
+          <span class="ts-yr">2025</span>
+          <span class="ts-txt">Zapasy wyprzedano. Dostawcy dają dłuższy kredyt (DPO: 45→56 dni). <strong>Gotówka wróciła.</strong> CFO = +6 949 tys.</span>
+        </div>
+      </div>
+    </div>
+    <div class="sl-right">
+      <div class="visual-card">
+        <div class="chart-title">Zapasy — tu leżała gotówka (tys. PLN)</div>
+        <div class="chart-wrap"><canvas id="cWC"></canvas></div>
+        <p class="chart-note">2024: gotówka utknęła w magazynie. 2025: zapasy spadły — gotówka wróciła.</p>
+        <div class="mini-compare">
+          <div class="mc-item neg"><span class="mc-yr">2024</span><span class="mc-icon">↑</span><span class="mc-txt">5 mln PLN zamrożone</span></div>
+          <div class="mc-arrow">→</div>
+          <div class="mc-item pos"><span class="mc-yr">2025</span><span class="mc-icon">↓</span><span class="mc-txt">uwolniono · gotówka wróciła</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 5 — CFO BRIDGE (WATERFALL)
+──────────────────────────────────────────────── -->
+<div class="slide" id="s5">
+  <div class="sl-hd">
+    <span class="sl-tag">04 · Skąd wzięła się gotówka?</span>
+    <h2 class="sl-title">Rozkład gotówki 2025: krok po kroku od <span class="gl" data-gl="ebitda">EBITDA</span> do <span class="gl" data-gl="cfo">CFO</span></h2>
+    <p class="slide-headline">3,4&nbsp;mln&nbsp;PLN gotówki wróciło dzięki magazynowi i dostawcom — <em>nie dzięki wzrostowi marży.</em></p>
+  </div>
+  <div class="sl-body">
+    <div class="sl-left">
+      <p style="font-size:13px;color:var(--text2);line-height:1.6">
+        Każdy krok diagramu to realna operacja — pieniądze, które <em>wpłynęły</em>
+        na konto lub je <em>opuściły</em>. Najedź na słupek, żeby zobaczyć szczegóły.
+      </p>
+      <div class="mrows" id="bridgeRows" style="font-size:12px"><!-- built by buildBridgeRows() --></div>
+      <div class="insight warn">
+        <span class="insight-lbl">Kluczowy wniosek dla właściciela</span>
+        W 2025 dwa czynniki dały więcej gotówki niż sama EBITDA:
+        <strong>uwolnienie zapasów (+1 463 tys.)</strong> i
+        <strong>dłuższy kredyt od dostawców (+1 922 tys.)</strong>.
+        To szansa — ale nie trwała gwarancja.
+      </div>
+    </div>
+    <div class="sl-right">
+      <div class="visual-card">
+        <div class="chart-title">Wodospad gotówki 2025 — od EBITDA do CFO (tys. PLN)</div>
+        <div class="chart-wrap lg"><canvas id="cBridge"></canvas></div>
+        <p class="chart-note">Granatowy = suma totalna · Zielony = gotówka wpłynęła · Czerwony = gotówka odpłynęła</p>
+        <div style="border-top:1px solid var(--border);padding-top:8px;font-size:12px;color:var(--text2);line-height:1.6">
+          <span style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px">Skąd wzięła się poprawa CFO?</span>
+          Największy wkład: <strong>1. uwolnienie zapasów (+1 463 tys.)</strong> i <strong>2. dłuższe finansowanie od dostawców (+1 922 tys.)</strong>.
+          <em style="display:block;margin-top:5px;color:var(--neg);font-weight:600;font-style:normal">To nie była poprawa marży operacyjnej.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 6 — CASH FLOW SALES
+──────────────────────────────────────────────── -->
+<div class="slide" id="s6">
+  <div class="sl-hd">
+    <span class="sl-tag">05 · Cash Flow Sales</span>
+    <h2 class="sl-title">Czy sprzedaż naprawdę zostawia gotówkę w firmie?</h2>
+  </div>
+  <div class="sl-body">
+    <div class="sl-left">
+      <div class="insight">
+        <span class="insight-lbl">Co to jest <span class="gl" data-gl="cfs">Cash Flow Sales</span>?</span>
+        Pokazuje, <strong>ile gotówki naprawdę zostawia działalność handlowa</strong> — po uwzględnieniu
+        pieniędzy zamrożonych w należnościach i zapasach.<br><br>
+        <strong style="color:var(--navy)">CFS = EBIT − ΔKON</strong><br>
+        <span style="font-size:11px;color:var(--text3)">EBIT = zysk operacyjny · ΔKON = zmiana kapitału obrotowego netto</span>
+      </div>
+      <div class="sig-box neg">
+        <strong>2024: −6 044 tys. PLN — sprzedaż niszczyła gotówkę</strong>
+        Firma wystawiała faktury, ale pieniądze uciekały do magazynu.
+        Na każdą złotówkę sprzedaży — gotówka na koncie malała.
+      </div>
+      <div class="sig-box pos">
+        <strong>2025: +2 742 tys. PLN — sprzedaż zostawia gotówkę</strong>
+        Poprawa o 8 786 tys. PLN w jednym roku. Ale uwaga: to głównie efekt
+        uwolnienia zapasów — nie strukturalnej poprawy marży handlowej.
+      </div>
+      <div class="insight warn">
+        <span class="insight-lbl">Czy to trwałe?</span>
+        Przy marży EBIT zaledwie <strong>0,7%</strong> — kolejny wzrost cen surowców
+        lub przyrost zapasów może szybko zepchnąć CFS z powrotem na minus. Poprawa jest realna, ale krucha.
+      </div>
+    </div>
+    <div class="sl-right">
+      <div class="visual-card">
+        <div class="chart-title">Sprzedaż zostawia gotówkę? Cash Flow Sales i jego składowe 2024–2025 (tys. PLN)</div>
+        <div class="chart-wrap"><canvas id="cCFS"></canvas></div>
+        <p class="chart-note">Słupki = składowe (EBIT + efekt kapitału) · Linia = wynikowy CFS · 2024: obie składowe ciągnęły w dół</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 7 — CCC
+──────────────────────────────────────────────── -->
+<div class="slide" id="s7">
+  <div class="sl-hd">
+    <span class="sl-tag">06 · Cykl gotówkowy</span>
+    <h2 class="sl-title">Ile dni gotówka jest zamrożona w operacjach firmy?</h2>
+  </div>
+  <div class="sl-body wide">
+    <div class="sl-left">
+      <div class="ccc-flow" id="cccFlow"><!-- built by buildCCCFlow() --></div>
+      <div class="mrows" style="font-size:12px">
+        <div class="mr"><span class="mr-l"><span class="gl" data-gl="dso">DSO</span> — klienci płacą wolniej</span><span class="mr-v neg">46 → 51 dni ↑</span></div>
+        <div class="mr"><span class="mr-l"><span class="gl" data-gl="dio">DIO</span> — zapasy rotują szybciej</span><span class="mr-v pos">82 → 73 dni ↓</span></div>
+        <div class="mr"><span class="mr-l"><span class="gl" data-gl="dpo">DPO</span> — dostawcy finansują dłużej</span><span class="mr-v pos">45 → 56 dni ↑</span></div>
+        <div class="mr total"><span class="mr-l"><span class="gl" data-gl="ccc">CCC</span> — cykl gotówkowy</span><span class="mr-v pos">83 → 68 dni ↓</span></div>
+      </div>
+      <div class="insight neg" style="margin-top:8px">
+        <span class="insight-lbl">Ostrzeżenie — DSO rośnie</span>
+        Klienci zaczęli płacić wolniej. Każdy dzień DSO powyżej bazy
+        to <strong>~204 tys. PLN</strong> gotówki zamrożonej u kontrahentów.
+      </div>
+    </div>
+    <div class="sl-right">
+      <div class="visual-card">
+        <div class="chart-title">Gotówka wraca szybciej, ale klienci płacą wolniej — DSO/DIO/DPO/CCC 2024 vs 2025 (dni)</div>
+        <div class="chart-wrap"><canvas id="cCCC"></canvas></div>
+        <p class="chart-note">Zielony = poprawa w 2025 · Czerwony = pogorszenie · Szary = wartości 2024 dla porównania</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 8 — WHAT-IF SIMULATOR
+──────────────────────────────────────────────── -->
+<div class="slide" id="s8">
+  <div class="sl-hd">
+    <span class="sl-tag">07 · Symulator decyzji</span>
+    <h2 class="sl-title">Co się stanie, jeśli zmienimy warunki handlowe?</h2>
+    <p class="sl-sub">Przesuń suwaki — natychmiast zobaczysz ile gotówki można uwolnić lub stracić. Dane bazowe: 2025.</p>
+  </div>
+  <div class="sl-body full" style="padding-top:4px">
+    <div class="sim-wrap">
+      <div class="sim-ctrl-list">
+        <div class="sc">
+          <div class="sc-hd">
+            <span class="sc-name"><span class="gl" data-gl="dso">DSO</span> — klienci płacą po:</span>
+            <span class="sc-val" id="dsoDisp">51<small>dni</small></span>
+          </div>
+          <input type="range" id="dsoSlider" min="28" max="75" value="51" step="1">
+          <div class="sc-meta"><span>28 dni</span><span>Bazowe: 51 dni · 1 dzień ≈ 204 tys. PLN</span><span>75 dni</span></div>
+        </div>
+        <div class="sc">
+          <div class="sc-hd">
+            <span class="sc-name"><span class="gl" data-gl="dio">DIO</span> — zapasy wystarczają na:</span>
+            <span class="sc-val" id="dioDisp">73<small>dni</small></span>
+          </div>
+          <input type="range" id="dioSlider" min="40" max="110" value="73" step="1">
+          <div class="sc-meta"><span>40 dni</span><span>Bazowe: 73 dni · 1 dzień ≈ 176 tys. PLN</span><span>110 dni</span></div>
+        </div>
+        <div class="sc">
+          <div class="sc-hd">
+            <span class="sc-name"><span class="gl" data-gl="dpo">DPO</span> — dostawcy czekają:</span>
+            <span class="sc-val" id="dpoDisp">56<small>dni</small></span>
+          </div>
+          <input type="range" id="dpoSlider" min="25" max="90" value="56" step="1">
+          <div class="sc-meta"><span>25 dni</span><span>Bazowe: 56 dni · 1 dzień ≈ 176 tys. PLN</span><span>90 dni</span></div>
+        </div>
+        <button id="simReset" style="background:none;border:none;padding:4px 0;font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:3px;">
+          Przywróć wartości bazowe 2025
+        </button>
+      </div>
+      <div class="sim-results">
+        <div class="sr-ccc">
+          <div class="sr-ccc-lbl">Cykl gotówkowy (<span class="gl" data-gl="ccc">CCC</span>) po zmianie</div>
+          <div class="sr-ccc-val" id="simCCC">68</div>
+          <div class="sr-ccc-d" id="simCCCd">— brak zmian —</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:6px">Wpływ na gotówkę: <strong id="simTotal" style="color:var(--text1)">0 tys. PLN</strong></div>
+        </div>
+        <div class="sr-narr" id="simNarr">Przesuń suwak, żeby zobaczyć wpływ na gotówkę firmy.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 9A — MARŻA
+──────────────────────────────────────────────── -->
+<div class="slide" id="s9">
+  <div class="sl-hd">
+    <span class="sl-tag">08 · Rentowność</span>
+    <h2 class="sl-title">Gotówka wróciła — ale marża topnieje od trzech lat.</h2>
+  </div>
+  <div class="sl-body">
+    <div class="sl-left">
+      <div class="chart-title" style="margin-bottom:6px">Marże operacyjne i udział COGS — 2023–2025</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="cMargins"></canvas></div>
+      <p class="chart-note">Koszty własne rosną, marża topnieje — trend trzyletni.</p>
+      <div class="mrows" style="font-size:11.5px;margin-top:8px">
+        <div class="mr"><span class="mr-l">COGS / przychody 2023</span><span class="mr-v wn">80,7%</span></div>
+        <div class="mr"><span class="mr-l">COGS / przychody 2024</span><span class="mr-v neg">85,9%</span></div>
+        <div class="mr"><span class="mr-l">COGS / przychody 2025</span><span class="mr-v neg">86,4% ↑</span></div>
+        <div class="mr"><span class="mr-l">Marża EBITDA 2025</span><span class="mr-v wn">6,8%</span></div>
+        <div class="mr total"><span class="mr-l">Marża netto 2025</span><span class="mr-v neg">−0,1%</span></div>
+      </div>
+    </div>
+    <div class="sl-right" style="align-items:flex-start;gap:10px">
+      <div class="memo-para neg">
+        <span class="memo-label">Presja marżowa — spirala kosztów</span>
+        Koszty własne urosły z 80,7% do <strong>86,4% przychodów</strong> w trzy lata. Marża netto = −0,1%. Jeden gorszy kwartał — wynik spada poniżej zera.
+      </div>
+      <div class="memo-para neg">
+        <span class="memo-label">Brak siły cenowej — pułapka marżowa</span>
+        Przy COGS = 86,4% nie ma przestrzeni na rabaty. <strong>Każdy 1% wymuszonej obniżki to ~745&nbsp;tys.&nbsp;PLN mniej</strong> bez żadnej redukcji kosztów stałych.
+      </div>
+      <div class="insight warn" style="margin-top:4px">
+        <span class="insight-lbl">Kluczowa zależność</span>
+        CFO jest dobry, bo uwolniono zapasy i wydłużono kredyt od dostawców — <strong>nie dlatego, że marża wzrosła.</strong> To musi się zmienić, żeby poprawa była trwała.
+      </div>
+      <div id="risksGrid" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 9B — RYZYKA
+──────────────────────────────────────────────── -->
+<div class="slide" id="s9b">
+  <div class="sl-hd">
+    <span class="sl-tag">09 · Ryzyka</span>
+    <h2 class="sl-title">Dlaczego poprawa gotówki może nie być trwała?</h2>
+  </div>
+  <div class="sl-body" style="grid-template-columns:1fr 1fr;align-items:start;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="memo-para neg">
+        <span class="memo-label">Ekspozycja surowcowa — brak hedgingu</span>
+        Produkcja folii PE zależy od cen polietylenu i energii. <strong>Przy marży EBIT 0,7% wzrost cen surowców o 2–3% zepchnąłby wynik na stratę</strong> — bez możliwości obrony przez podniesienie cen.
+      </div>
+      <div class="memo-para neg">
+        <span class="memo-label">Klienci płacą coraz wolniej</span>
+        DSO wzrosło z 46 do <strong>51 dni</strong>. Każdy dodatkowy dzień oczekiwania to ~204&nbsp;tys.&nbsp;PLN zamrożonej gotówki. Trend niekorzystny — wymaga aktywnego zarządzania należnościami.
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="memo-para warn">
+        <span class="memo-label">CFO zależy od kapitału — nie od marży</span>
+        Poprawa 2025 pochodzi z uwolnienia zapasów (+1&nbsp;463&nbsp;tys.) i dłuższego kredytu od dostawców (+1&nbsp;922&nbsp;tys.) — <strong>nie ze wzrostu rentowności.</strong> Jeśli zapasy znów wzrosną, CFO spada.
+      </div>
+      <div class="memo-para warn">
+        <span class="memo-label">Dostawcy mogą skrócić terminy</span>
+        DPO wzrosło z 45 do 56 dni — korzystne, ale kruche. <strong>Gdyby dostawcy cofnęli ten kredyt, gotówka operacyjna stopniałaby o ~1,9&nbsp;mln&nbsp;PLN</strong> bez żadnej zmiany w sprzedaży.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────
+  SLAJD 10 — WNIOSEK KOŃCOWY
+──────────────────────────────────────────────── -->
+<div class="slide" id="s10">
+  <div class="sl-hd">
+    <span class="sl-tag">10 · Wniosek końcowy</span>
+    <h2 class="sl-title">Co z tego wynika dla właściciela biznesu?</h2>
+  </div>
+  <div class="sl-body full" style="padding-top:6px">
+    <div class="concl-grid">
+      <div class="cg-item ok">
+        <span class="cg-lbl">✓ Co poszło dobrze</span>
+        <div class="cg-list">
+          <div class="cg-row">CFO wzrósł do 6 949 tys. — realna gotówka na koncie</div>
+          <div class="cg-row">Zapasy uwolnione z magazynu (−1 463 tys. PLN)</div>
+          <div class="cg-row">Dostawcy finansują dłużej — DPO wzrosło: 45→56 dni</div>
+          <div class="cg-row">Cykl gotówkowy CCC skrócił się z 83 do 68 dni</div>
+          <div class="cg-row">Płynność i zadłużenie — stabilne, bez sygnałów kryzysu</div>
+        </div>
+      </div>
+      <div class="cg-item bad">
+        <span class="cg-lbl">✗ Co nadal nie działa</span>
+        <div class="cg-list">
+          <div class="cg-row">Marża netto bliska zera: −0,1% w 2025 r.</div>
+          <div class="cg-row">Koszty produkcji pochłaniają 86,4% przychodów</div>
+          <div class="cg-row">Klienci płacą wolniej — DSO wzrosło: 46→51 dni</div>
+          <div class="cg-row">CFO zależy od uwolnienia kapitału, nie od marży</div>
+          <div class="cg-row">Brak bufora na wzrost cen surowców lub energii</div>
+        </div>
+      </div>
+      <div class="cg-item act">
+        <span class="cg-lbl">→ Na co zwrócić uwagę</span>
+        <div class="cg-list">
+          <div class="cg-row">Monitorować DSO co kwartał — kto płaci z opóźnieniem?</div>
+          <div class="cg-row">Rozebrać COGS na składniki: surowce, energia, praca</div>
+          <div class="cg-row">Zweryfikować, czy DPO = warunki handlowe czy opóźnienia</div>
+          <div class="cg-row">Ustalić politykę hedgingu cen polietylenu</div>
+          <div class="cg-row">Dążyć do trwałej marży EBIT powyżej 2–3%</div>
+        </div>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="verdict-lbl">Wniosek właściciela biznesu</div>
+      <p class="verdict-txt">
+        ERG S.A. <strong>poprawił płynność gotówkową w 2025 roku</strong> — to dobra wiadomość.
+        Ale poprawa przyszła głównie z uwolnienia pieniędzy z magazynu i lepszych warunków z dostawcami,
+        <strong>nie ze wzrostu rentowności operacyjnej</strong>.
+        Przy kosztach produkcji pochłaniających 86,4% przychodów i marży netto bliskiej zera —
+        <strong>wystarczy gorszy kwartał cenowy, wzrost cen surowców lub pogorszenie DSO</strong>,
+        żeby gotówka znów wyparowała. Firma nie jest zagrożona finansowo,
+        ale <strong>musi poprawić marżę i lepiej kontrolować należności</strong>,
+        zanim będzie można uznać sytuację za trwale stabilną.
+      </p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ══════════════════════════════════════════════
+     BOTTOM NAVIGATION
+══════════════════════════════════════════════ -->
+<nav id="nav">
+  <button class="nav-btn" id="btnPrev">← Wstecz</button>
+  <div class="nav-center">
+    <div id="dots"><!-- built by buildDots() --></div>
+    <span class="nav-counter" id="navCounter">1 / 10</span>
+  </div>
+  <button class="nav-btn" id="btnNext">Dalej →</button>
+</nav>
+
+<div id="gl-tip"></div>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─────────────────────────────────────────────
+   EMBEDDED FALLBACK DATA
+   (used automatically if JSON files can't be fetched)
+───────────────────────────────────────────── */
+const FB_DATA = {"metadata":{"company":"ERG S.A.","period":"2023-2025","currency":"PLN","unit":"thousands"},"source_data":{"income_statement":[{"year":2023,"revenue":94272,"cogs":76111,"ebit":3975,"depreciation_amortization":4745,"ebitda":8720,"net_profit":3199},{"year":2024,"revenue":73660,"cogs":63287,"ebit":-821,"depreciation_amortization":4649,"ebitda":3828,"net_profit":-653},{"year":2025,"revenue":74463,"cogs":64330,"ebit":552,"depreciation_amortization":4517,"ebitda":5069,"net_profit":-67}],"cash_flow":[{"year":2023,"cfo":6260},{"year":2024,"cfo":-1128},{"year":2025,"cfo":6949}],"balance_sheet":[{"year":2023,"current_assets":23738,"inventory":9258,"receivables":12644,"current_liabilities":16020,"trade_payables":11496,"total_assets":74356,"total_liabilities":32944,"equity":41412},{"year":2024,"current_assets":23916,"inventory":14304,"receivables":9197,"cash":415,"current_liabilities":14266,"trade_payables":7872,"total_assets":70058,"total_liabilities":29303,"equity":40755},{"year":2025,"current_assets":25056,"inventory":12841,"receivables":10392,"cash":1823,"current_liabilities":14024,"trade_payables":9794,"total_assets":68514,"total_liabilities":27852,"equity":40662}]},"calculated_metrics":{"ebitda_cfo":[{"year":2023,"ebitda":8720,"cfo":6260,"cfo_to_ebitda":0.72,"interpretation":"Dobra konwersja EBITDA na gotówkę."},{"year":2024,"ebitda":3828,"cfo":-1128,"cfo_to_ebitda":-0.29,"interpretation":"Słaba konwersja — gotówka odpłynęła."},{"year":2025,"ebitda":5069,"cfo":6949,"cfo_to_ebitda":1.37,"interpretation":"Silne odbicie gotówkowe powyżej EBITDA."}],"working_capital":[{"year":2023,"receivables":12644,"inventory":9258,"trade_payables":11496,"kon":10406,"delta_kon":null},{"year":2024,"receivables":9197,"inventory":14304,"trade_payables":7872,"kon":15629,"delta_kon":5223},{"year":2025,"receivables":10392,"inventory":12841,"trade_payables":9794,"kon":13439,"delta_kon":-2190}],"cash_flow_sales":[{"year":2024,"ebit":-821,"delta_kon":5223,"cash_flow_sales":-6044,"driver":"Budowa zapasów i słabszy EBIT drenowały gotówkę."},{"year":2025,"ebit":552,"delta_kon":-2190,"cash_flow_sales":2742,"driver":"Uwolnienie kapitału obrotowego odwróciło sytuację."}],"ccc":[{"year":2024,"dso_days":46,"dio_days":82,"dpo_days":45,"ccc_days":83},{"year":2025,"dso_days":51,"dio_days":73,"dpo_days":56,"ccc_days":68}],"profitability":[{"year":2023,"cogs_pct_revenue":0.807,"ebitda_margin":0.093,"ebit_margin":0.042,"net_margin":0.034},{"year":2024,"cogs_pct_revenue":0.859,"ebitda_margin":0.052,"ebit_margin":-0.011,"net_margin":-0.009},{"year":2025,"cogs_pct_revenue":0.864,"ebitda_margin":0.068,"ebit_margin":0.007,"net_margin":-0.001}],"cfo_bridge_2025":[{"component":"EBITDA","value":5069,"type":"start"},{"component":"Zapasy ↓","value":1463,"type":"positive_driver"},{"component":"Należności ↑","value":-1195,"type":"negative_driver"},{"component":"Zobowiązania ↑","value":1922,"type":"positive_driver"},{"component":"Inne","value":-310,"type":"reconciliation"},{"component":"CFO","value":6949,"type":"end"}]}};
+
+const FB_STORY = {"top_red_flags":[{"title":"Presja kosztów produkcji","description":"COGS pochłania 86,4% przychodów — trend rosnący od 2023 r. Każdy wzrost cen surowców lub energii bezpośrednio uderza w marżę.","severity":"high"},{"title":"CFO zależy od kapitału obrotowego","description":"Odbudowa przepływów to efekt uwolnienia KON i finansowania dostawców — nie trwałej rentowności. Kolejny wzrost zapasów może znów zepchnąć CFO na minus.","severity":"high"},{"title":"Marża netto bliska zera","description":"Marża netto = −0,1% w 2025 r. Firma nie ma poduszki finansowej na niespodzianki rynkowe.","severity":"high"},{"title":"Klienci płacą wolniej (DSO ↑)","description":"DSO wzrosło z 46 do 51 dni. Każdy dodatkowy dzień to ~204 tys. PLN mniej gotówki w firmie.","severity":"medium"},{"title":"Ekspozycja na ceny surowców","description":"Model produkcji folii PE jest uzależniony od cen polietylenu i energii. Brak informacji o polityce hedgingu.","severity":"medium"}]};
+
+/* ─────────────────────────────────────────────
+   DATA LOADING
+───────────────────────────────────────────── */
+let DATA, STORY;
+
+async function loadData() {
+  try {
+    const [d, s] = await Promise.all([
+      fetch('./erg_sa_data.json').then(r => { if (!r.ok) throw 0; return r.json(); }),
+      fetch('./erg_sa_storytelling.json').then(r => { if (!r.ok) throw 0; return r.json(); })
+    ]);
+    DATA = d; STORY = s;
+  } catch {
+    DATA = FB_DATA; STORY = FB_STORY;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────────── */
+const fmt  = n => n == null ? '—' : new Intl.NumberFormat('pl-PL').format(Math.round(n));
+const fmtD = (n, d = 1) => n == null ? '—' : n.toFixed(d).replace('.', ',');
+const sgn  = n => n >= 0 ? '+' : '';
+
+/* ─────────────────────────────────────────────
+   CHART GLOBAL DEFAULTS
+───────────────────────────────────────────── */
+Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+Chart.defaults.font.size   = 10;
+Chart.defaults.color       = '#AAB4C0';
+Chart.defaults.scale.grid.color       = 'rgba(0,0,0,.028)';
+Chart.defaults.scale.grid.drawBorder  = false;
+Chart.defaults.scale.ticks.maxTicksLimit = 5;
+Chart.defaults.plugins.legend.labels.boxWidth  = 8;
+Chart.defaults.plugins.legend.labels.padding   = 14;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+const TIP = {
+  backgroundColor: '#1E2A38', titleColor: '#fff', bodyColor: '#CBD5E1',
+  padding: 11, cornerRadius: 2, displayColors: false,
+  titleFont: { size: 12, weight: '600' }, bodyFont: { size: 11 }
+};
+const NG = { display: false };
+const SG = { color: '#EEECEA', lineWidth: 1 };
+const NB = { display: false };
+const C  = { navy:'#1E2A38', slate:'#5A7EA6', green:'#4B7F52', red:'#A14B4B', amber:'#B08968' };
+
+/* ─────────────────────────────────────────────
+   SLIDES METADATA
+───────────────────────────────────────────── */
+const SLIDES = [
+  'Intro', 'Podsumowanie', 'EBITDA vs CFO',
+  'Kapitał obrotowy', 'Skąd gotówka?', 'Cash Flow Sales',
+  'Cykl gotówkowy', 'Symulator', 'Marża', 'Ryzyka', 'Wniosek'
+];
+const TOTAL = SLIDES.length;
+
+/* ─────────────────────────────────────────────
+   BUILD: SLIDE 2 — KPI TILES (compact, right column)
+───────────────────────────────────────────── */
+function buildKPIs() {
+  const ec   = DATA.calculated_metrics.ebitda_cfo;
+  const ccc  = DATA.calculated_metrics.ccc;
+  const cfs  = DATA.calculated_metrics.cash_flow_sales;
+  const last = ec[ec.length - 1];
+  const cccL = ccc[ccc.length - 1];
+  const cfsL = cfs[cfs.length - 1];
+
+  const tiles = [
+    {
+      tag: 'CFO 2025', val: fmt(last.cfo), unit: 'tys. PLN',
+      cls: 'k-pos', sig: '↑ Odbudowa z −1 128 tys.', sigCls: 'up'
+    },
+    {
+      tag: 'EBITDA 2025', val: fmt(last.ebitda), unit: 'tys. PLN',
+      cls: 'k-pos', sig: '↑ +32,4% rok do roku', sigCls: 'up'
+    },
+    {
+      tag: 'Cash Flow Sales',
+      val: (cfsL.cash_flow_sales >= 0 ? '+' : '') + fmt(cfsL.cash_flow_sales),
+      unit: 'tys. PLN',
+      cls: 'k-pos', sig: '↑ Odwrócenie z −6 044', sigCls: 'up'
+    },
+    {
+      tag: 'CCC 2025', val: cccL.ccc_days, unit: 'dni',
+      cls: 'k-warn', sig: '↓ Skrócenie z 83 dni', sigCls: 'up'
+    }
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = tiles.map(t => `
+    <div class="kti ${t.cls}">
+      <div class="kti-tag">${t.tag}</div>
+      <div class="kti-val">${t.val}</div>
+      <div class="kti-unit">${t.unit}</div>
+      <div class="kti-sig ${t.sigCls}">${t.sig}</div>
+    </div>
+  `).join('');
+}
+
+/* ─────────────────────────────────────────────
+   BUILD: SLIDE 4 — WORKING CAPITAL VISUAL
+───────────────────────────────────────────── */
+function buildWC() {
+  const wc   = DATA.calculated_metrics.working_capital;
+  const maxV = Math.max(...wc.flatMap(y => [y.receivables, y.inventory, y.trade_payables]));
+
+  const items = [
+    { key: 'receivables',    label: 'Należności',           color: C.slate,
+      desc: 'Pieniądze, które klienci są winni firmie — faktury wystawione, ale niezapłacone. Im wyższe, tym więcej gotówki czeka u kontrahentów.' },
+    { key: 'inventory',      label: 'Zapasy',                color: C.navy,
+      desc: 'Gotówka zamrożona w surowcach i produktach w magazynie — czeka, aż zostanie sprzedana i zapłacona. W 2024 nastąpił gwałtowny wzrost.' },
+    { key: 'trade_payables', label: 'Zobowiązania handlowe', color: C.amber,
+      desc: 'Faktury od dostawców, których firma jeszcze nie zapłaciła — bezodsetkowy kredyt kupiecki. Im wyższe, tym dłużej dostawcy finansują firmę.' }
+  ];
+
+  document.getElementById('wcVisual').innerHTML = items.map(it => `
+    <div class="wc-item">
+      <div class="wc-lbl"><span class="wc-dot" style="background:${it.color}"></span>${it.label}</div>
+      <div class="wc-desc">${it.desc}</div>
+      <div class="wc-bars">
+        ${wc.map(y => {
+          const pct = (y[it.key] / maxV * 100).toFixed(1);
+          const highlight = it.key === 'inventory' && y.year === 2024;
+          return `<div class="wc-bar-row">
+            <span class="wc-yr">${y.year}</span>
+            <div class="wc-track">
+              <div class="wc-fill" style="width:${pct}%;background:${highlight ? C.red : it.color}">
+                <span class="wc-num">${fmt(y[it.key])}</span>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('') + `
+    <div class="insight neg">
+      <span class="insight-lbl">Problem 2024</span>
+      Zapasy <strong>skoczyły z 9 258 do 14 304 tys. PLN</strong> — ponad 5 mln PLN gotówki
+      zamrożonej w magazynie. To główna przyczyna kryzysu gotówkowego: CFO = −1 128 tys.
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────
+   BUILD: SLIDE 5 — BRIDGE ROWS (left column)
+───────────────────────────────────────────── */
+function buildBridgeRows() {
+  const bridge = DATA.calculated_metrics.cfo_bridge_2025;
+  const labels = {
+    'EBITDA':           'Start: EBITDA 2025',
+    'Zapasy ↓':         '+ Uwolnienie zapasów',
+    'Należności ↑':     '− Wzrost należności',
+    'Zobowiązania ↑':   '+ Finansowanie dostawców',
+    'Inne':             '± Korekty podatkowe i inne',
+    'CFO':              '= Gotówka z operacji (CFO)'
+  };
+
+  document.getElementById('bridgeRows').innerHTML = bridge.map(d => {
+    const lbl     = labels[d.component] || d.component;
+    const isTotal = d.type === 'start' || d.type === 'end';
+    const cls     = isTotal ? '' : (d.value >= 0 ? 'pos' : 'neg');
+    const valStr  = isTotal ? fmt(d.value) : sgn(d.value) + fmt(Math.abs(d.value));
+    return `<div class="mr ${isTotal ? 'total' : ''}">
+      <span class="mr-l">${lbl}</span>
+      <span class="mr-v ${cls}">${valStr} tys.</span>
+    </div>`;
+  }).join('');
+}
+
+/* ─────────────────────────────────────────────
+   BUILD: SLIDE 7 — CCC CYCLE VISUAL
+───────────────────────────────────────────── */
+function buildCCCFlow() {
+  const ccc      = DATA.calculated_metrics.ccc;
+  const [y1, y2] = ccc;
+
+  const items = [
+    { key: 'dso_days', type: 'dso', label: 'DSO — klienci płacą',       desc: 'Gotówka jest u kontrahentów' },
+    { key: 'dio_days', type: 'dio', label: 'DIO — zapasy w magazynie',   desc: 'Gotówka zamrożona w produkcji' },
+    { key: 'dpo_days', type: 'dpo', label: 'DPO — dostawcy finansują',   desc: 'Bezodsetkowy kredyt (odejmujemy)' }
+  ];
+
+  const blocks = items.map(it => {
+    const v2    = y2[it.key];
+    const delta = v2 - y1[it.key];
+    const isGood = it.type === 'dpo' ? delta > 0 : delta < 0;
+    const dStr  = (delta > 0 ? '+' : '') + delta + 'd';
+    return `<div class="cycle-block ${it.type}">
+      <div class="cycle-v">${v2}<small>dni</small></div>
+      <div class="cycle-info">
+        <div class="cycle-name">${it.label}</div>
+        <div class="cycle-desc">${it.desc}</div>
+      </div>
+      <span class="ccc-badge ${isGood ? 'pos' : 'neg'}">${dStr}</span>
+    </div>`;
+  }).join('');
+
+  const deltaCCC = y2.ccc_days - y1.ccc_days;
+  document.getElementById('cccFlow').innerHTML = `
+    <div class="ccc-flow-lbl">Cykl gotówkowy 2025</div>
+    ${blocks}
+    <div class="cycle-total">
+      <span>CCC 2025</span>
+      <span class="cycle-total-v">${y2.ccc_days}<small>dni</small></span>
+      <span class="ccc-badge pos">↓ ${Math.abs(deltaCCC)}d vs 2024</span>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────
+   BUILD: SLIDE 9 — RISK CARDS
+───────────────────────────────────────────── */
+function buildRisks() {
+  const OPER = [
+    {
+      sev: 'high',
+      title: 'Ceny polietylenu i surowców',
+      desc: 'Produkcja folii PE jest bezpośrednio powiązana z cenami ropy naftowej. Brak hedgingu — każdy skok cen polietylenu uderza natychmiast w koszt produkcji i marżę operacyjną.'
+    },
+    {
+      sev: 'high',
+      title: 'Koszty energii',
+      desc: 'Przetwórstwo tworzyw jest energochłonne. Przy EBIT 0,7% wzrost cen prądu lub gazu o kilka procent może zepchnąć wynik operacyjny poniżej zera bez żadnych innych zmian.'
+    },
+    {
+      sev: 'med',
+      title: 'Wykorzystanie mocy produkcyjnych',
+      desc: 'Przychody spadły ~21% vs 2023. Niższy wolumen rozłożony na te same koszty stałe podbija koszt jednostkowy i zmniejsza margines bezpieczeństwa operacyjnego.'
+    },
+    {
+      sev: 'med',
+      title: 'Prognozowanie popytu i zarządzanie zapasami',
+      desc: 'W 2024 zapasy wzrosły o 55% — produkcja wyprzedziła zamówienia. Złe planowanie zamraża gotówkę, grozi odpisami i zwiększa ryzyko przestoju linii produkcyjnych.'
+    },
+    {
+      sev: 'med',
+      title: 'Presja cenowa od klientów',
+      desc: 'Przy COGS = 86,4% przychodów przestrzeń do negocjacji jest minimalna. Klienci wymuszający 1–2% rabatu to ok. 750–1 500 tys. PLN mniej zysku bez żadnej redukcji kosztów stałych.'
+    },
+  ];
+
+  const CASH = [
+    {
+      sev: 'high',
+      title: 'Zależność CFO od kapitału obrotowego',
+      desc: 'Poprawa płynności 2025 to efekt uwolnienia zapasów i kredytu od dostawców — nie wzrostu rentowności. Kolejny wzrost zapasów lub pogorszenie DSO może szybko wyzerować przepływy operacyjne.'
+    },
+    {
+      sev: 'med',
+      title: 'DSO rośnie — jakość i koncentracja należności',
+      desc: 'DSO wzrosło z 46 do 51 dni. Każdy dzień powyżej bazy to ~204 tys. PLN zamrożone u kontrahentów. Koncentracja należności u kilku dużych odbiorców podwaja ryzyko: utrata jednego uderza w przychody i płynność jednocześnie.'
+    },
+    {
+      sev: 'med',
+      title: 'Trwałość DPO — warunki czy opóźnienia?',
+      desc: 'DPO wzrosło z 45 do 56 dni — korzystne, ale niejednoznaczne. Jeśli to wynegocjowane terminy: stabilne. Jeśli to opóźnione płatności: dostawcy mogą wymagać zaliczek lub skrócić kredyt kupiecki.'
+    },
+    {
+      sev: 'med',
+      title: 'Ryzyko ponownego wzrostu zapasów',
+      desc: 'Poprawa 2025 wynika częściowo z redukcji zapasów. Jeśli popyt spowolni lub produkcja znów wyprzedzi sprzedaż — zapasy wzrosną, a gotówka ponownie utknęła w magazynie, powtarzając scenariusz 2024.'
+    },
+  ];
+
+  const renderGroup = (title, items) => `
+    <p style="font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;margin-top:12px">${title}</p>
+    <div class="risks-grid">
+      ${items.map(f => `
+        <div class="rcard ${f.sev === 'high' ? 'high' : 'med'}">
+          <span class="rc-sev">${f.sev === 'high' ? 'Wysokie' : 'Średnie'}</span>
+          <div class="rc-t">${f.title}</div>
+          <div class="rc-d">${f.desc}</div>
+        </div>
+      `).join('')}
+    </div>`;
+
+  document.getElementById('risksGrid').innerHTML =
+    renderGroup('A · Ryzyka operacyjne', OPER) +
+    renderGroup('B · Ryzyka gotówkowe', CASH);
+}
+
+/* ─────────────────────────────────────────────
+   CHARTS — lazy initialization
+───────────────────────────────────────────── */
+const chartInstances = {};
+
+function initChart(id, fn) {
+  if (chartInstances[id]) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  chartInstances[id] = fn(el);
+}
+
+/* Slide 3: EBITDA vs CFO */
+function buildChartEbitdaCfo() {
+  initChart('cEbitdaCfo', el => {
+    const data = DATA.calculated_metrics.ebitda_cfo;
+    return new Chart(el, {
+      data: {
+        labels: data.map(d => String(d.year)),
+        datasets: [
+          {
+            type: 'bar', label: 'EBITDA',
+            data: data.map(d => d.ebitda),
+            backgroundColor: 'rgba(30,42,56,.12)', borderColor: C.navy, borderWidth: 1.5, order: 2
+          },
+          {
+            type: 'line', label: 'CFO (gotówka)',
+            data: data.map(d => d.cfo),
+            borderColor: C.navy, tension: 0, borderWidth: 2.5,
+            pointRadius: 9,
+            pointBackgroundColor: data.map(d => d.cfo >= 0 ? C.green : C.red),
+            pointBorderColor: '#fff', pointBorderWidth: 2, fill: false, order: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index' },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, padding: 16, usePointStyle: true } },
+          tooltip: {
+            ...TIP, displayColors: true,
+            callbacks: {
+              label: c => ` ${c.dataset.label}: ${fmt(c.parsed.y)} tys. PLN`,
+              afterLabel: c => {
+                if (c.datasetIndex !== 1) return '';
+                const d = data[c.dataIndex];
+                return ` (CFO/EBITDA: ${fmtD(d.cfo_to_ebitda, 2)}×) · ${d.interpretation}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: NG, border: NB },
+          y: { grid: SG, border: NB, ticks: { callback: v => fmt(v) } }
+        }
+      }
+    });
+  });
+}
+
+/* Slide 4: Working Capital grouped bar */
+function buildChartWC() {
+  initChart('cWC', el => {
+    const wc = DATA.calculated_metrics.working_capital;
+    const labels  = wc.map(y => String(y.year));
+    const inv     = wc.map(y => y.inventory);
+    const peakIdx = inv.indexOf(Math.max(...inv));
+    const lastIdx = labels.length - 1;
+
+    // 2024 = crisis red  |  2025 = resolved green  |  2023 = neutral
+    const bgColors = inv.map((_, i) =>
+      i === peakIdx ? 'rgba(192,57,43,.72)'  :
+      i === lastIdx ? 'rgba(39,174,96,.55)'  :
+                      'rgba(155,160,168,.28)');
+    const bdColors = inv.map((_, i) =>
+      i === peakIdx ? 'rgba(192,57,43,.95)'  :
+      i === lastIdx ? 'rgba(39,174,96,.85)'  :
+                      'rgba(155,160,168,.5)');
+
+    // Pill callout — readable business annotation above peak bar
+    const calloutPlugin = {
+      id: 'invCallout',
+      afterDraw(chart) {
+        const { ctx, scales: { x, y } } = chart;
+        const xPos = x.getPixelForValue(peakIdx);
+        const yTop = y.getPixelForValue(inv[peakIdx]);
+
+        const line1 = '+55%';
+        const line2 = '5 mln PLN zamrożone';
+        const padX = 9, padY = 4, lh = 15, gap = 10;
+
+        ctx.save();
+
+        // Measure widths
+        ctx.font = '700 13px Inter,system-ui,sans-serif';
+        const w1 = ctx.measureText(line1).width;
+        ctx.font = '600 10px Inter,system-ui,sans-serif';
+        const w2 = ctx.measureText(line2).width;
+        const maxW = Math.max(w1, w2);
+
+        const boxW = maxW + padX * 2;
+        const boxH = lh * 2 + padY * 2;
+        const boxX = xPos - boxW / 2;
+        const boxY = yTop - gap - boxH;
+
+        // Pill background
+        ctx.fillStyle = 'rgba(192,57,43,.1)';
+        const r = 5;
+        if (ctx.roundRect) {
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, r);
+          ctx.fill();
+        } else {
+          ctx.fillRect(boxX, boxY, boxW, boxH);
+        }
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        // Line 1 — big bold percentage
+        ctx.font = '700 13px Inter,system-ui,sans-serif';
+        ctx.fillStyle = '#A93226';
+        ctx.fillText(line1, xPos, boxY + padY);
+
+        // Line 2 — supporting label
+        ctx.font = '600 10px Inter,system-ui,sans-serif';
+        ctx.fillStyle = '#C0392B';
+        ctx.fillText(line2, xPos, boxY + padY + lh);
+
+        ctx.restore();
+      }
+    };
+
+    return new Chart(el, {
+      type: 'bar',
+      plugins: [calloutPlugin],
+      data: {
+        labels,
+        datasets: [{
+          label: 'Zapasy (tys. PLN)',
+          data: inv,
+          backgroundColor: bgColors,
+          borderColor: bdColors,
+          borderWidth: 1.5,
+          borderRadius: 4,
+          barPercentage: 0.72,
+          categoryPercentage: 0.88
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        layout: { padding: { top: 56 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...TIP, displayColors: false,
+            callbacks: {
+              title: c => `Zapasy ${c[0].label}`,
+              label: c => ` ${fmt(c.parsed.y)} tys. PLN`
+            }
+          }
+        },
+        scales: {
+          x: { grid: NG, border: NB },
+          y: { grid: SG, border: NB, min: 0, ticks: { callback: v => fmt(v) } }
+        }
+      }
+    });
+  });
+}
+
+/* Slide 5: CFO Bridge waterfall with VALUE LABELS */
+function buildChartBridge() {
+  initChart('cBridge', el => {
+    const bridge = DATA.calculated_metrics.cfo_bridge_2025;
+    let running = 0;
+    const bars = [], colors = [], origVals = [];
+
+    bridge.forEach(d => {
+      if (d.type === 'start') {
+        bars.push([0, d.value]); colors.push(C.navy); origVals.push(d.value); running = d.value;
+      } else if (d.type === 'end') {
+        bars.push([0, d.value]); colors.push(C.slate); origVals.push(d.value);
+      } else {
+        const lo = Math.min(running, running + d.value);
+        const hi = Math.max(running, running + d.value);
+        bars.push([lo, hi]);
+        colors.push(d.value >= 0 ? C.green : (d.type === 'reconciliation' ? C.amber : C.red));
+        origVals.push(d.value);
+        running += d.value;
+      }
+    });
+
+    /* Inline value-label plugin — only applies to this chart */
+    const labelPlugin = {
+      id: 'bridgeLabels',
+      afterDraw(chart) {
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.font = '600 10px Inter, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          const d      = bridge[i];
+          const isTotal = d.type === 'start' || d.type === 'end';
+          const txt    = isTotal
+            ? fmt(origVals[i]) + ' tys.'
+            : (origVals[i] >= 0 ? '+' : '') + fmt(Math.abs(origVals[i])) + ' tys.';
+          const barH   = Math.abs(bar.base - bar.y);
+
+          if (barH > 24) {
+            ctx.fillStyle    = 'rgba(255,255,255,.92)';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(txt, bar.x, (bar.y + bar.base) / 2);
+          } else {
+            ctx.fillStyle    = '#1E2A38';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(txt, bar.x, bar.y - 4);
+          }
+        });
+        ctx.restore();
+      }
+    };
+
+    const hints = {
+      'EBITDA':         'Potencjał operacyjny — zysk przed amortyzacją i podatkami.',
+      'Zapasy ↓':       'Mniej gotówki w magazynie — sprzedano zapasy zgromadzone w 2024.',
+      'Należności ↑':   'Klienci płacą wolniej — więcej pieniędzy czeka na przelew. Negatywny efekt.',
+      'Zobowiązania ↑': 'Dostawcy czekają dłużej — firma korzysta z dłuższego kredytu kupieckiego.',
+      'Inne':           'Korekty podatkowe i pozostałe efekty nieoperacyjne.',
+      'CFO':            'Realna gotówka wygenerowana z działalności operacyjnej w 2025 r.'
+    };
+
+    return new Chart(el, {
+      type: 'bar',
+      data: {
+        labels: bridge.map(d => d.component),
+        datasets: [{ data: bars, backgroundColor: colors, borderWidth: 0, borderRadius: 1 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...TIP,
+            callbacks: {
+              title: c => c[0].label,
+              label: c => {
+                const d = bridge[c.dataIndex];
+                return (d.type === 'start' || d.type === 'end')
+                  ? ` Łącznie: ${fmt(d.value)} tys. PLN`
+                  : ` Efekt: ${d.value >= 0 ? '+' : ''}${fmt(d.value)} tys. PLN`;
+              },
+              afterLabel: c => {
+                const h = hints[bridge[c.dataIndex].component];
+                return h ? ` → ${h}` : '';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: NG, border: NB, ticks: { font: { size: 10 }, maxRotation: 18 } },
+          y: { grid: SG, border: NB, ticks: { callback: v => fmt(v) }, min: 0, max: 8600 }
+        }
+      },
+      plugins: [labelPlugin]
+    });
+  });
+}
+
+/* Slide 6: Cash Flow Sales */
+function buildChartCFS() {
+  initChart('cCFS', el => {
+    const cfs = DATA.calculated_metrics.cash_flow_sales;
+    return new Chart(el, {
+      data: {
+        labels: cfs.map(d => String(d.year)),
+        datasets: [
+          {
+            type: 'bar', label: 'EBIT (zysk operacyjny)',
+            data: cfs.map(d => d.ebit),
+            backgroundColor: cfs.map(d => d.ebit >= 0 ? 'rgba(75,127,82,.38)' : 'rgba(161,75,75,.38)'),
+            borderColor: cfs.map(d => d.ebit >= 0 ? C.green : C.red), borderWidth: 1.5, stack: 'a'
+          },
+          {
+            type: 'bar', label: 'Efekt kapitału obrotowego (−ΔKON)',
+            data: cfs.map(d => -d.delta_kon),
+            backgroundColor: cfs.map(d => -d.delta_kon >= 0 ? 'rgba(75,127,82,.18)' : 'rgba(161,75,75,.18)'),
+            borderColor: cfs.map(d => -d.delta_kon >= 0 ? C.green : C.red), borderWidth: 1.5, stack: 'a'
+          },
+          {
+            type: 'line', label: 'Cash Flow Sales (wynik)',
+            data: cfs.map(d => d.cash_flow_sales),
+            borderColor: C.navy, tension: 0, borderWidth: 3,
+            pointRadius: 10,
+            pointBackgroundColor: cfs.map(d => d.cash_flow_sales >= 0 ? C.green : C.red),
+            pointBorderColor: '#fff', pointBorderWidth: 2, fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index' },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, padding: 16, usePointStyle: true } },
+          tooltip: {
+            ...TIP, displayColors: true,
+            callbacks: {
+              label: c => ` ${c.dataset.label}: ${sgn(c.parsed.y)}${fmt(Math.abs(c.parsed.y))} tys.`,
+              afterBody: ctx => {
+                const d = DATA.calculated_metrics.cash_flow_sales[ctx[0]?.dataIndex];
+                return d ? [`  → ${d.driver}`] : [];
+              }
+            }
+          }
+        },
+        scales: { x: { grid: NG, border: NB }, y: { grid: SG, border: NB, ticks: { callback: v => fmt(v) } } }
+      }
+    });
+  });
+}
+
+/* Slide 7: CCC grouped bar */
+function buildChartCCC() {
+  initChart('cCCC', el => {
+    const ccc     = DATA.calculated_metrics.ccc;
+    const keys    = ['dso_days', 'dio_days', 'dpo_days', 'ccc_days'];
+    const [y1, y2] = ccc;
+    const colors2025 = [C.red, C.green, C.green, C.green];
+
+    return new Chart(el, {
+      type: 'bar',
+      data: {
+        labels: ['DSO', 'DIO', 'DPO', 'CCC'],
+        datasets: [
+          { label: String(y1.year), data: keys.map(k => y1[k]), backgroundColor: 'rgba(90,126,166,.18)', borderColor: 'rgba(90,126,166,.5)', borderWidth: 1.5 },
+          { label: String(y2.year), data: keys.map(k => y2[k]), backgroundColor: colors2025.map(c => c + '99'), borderColor: colors2025, borderWidth: 1.5 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, padding: 16 } },
+          tooltip: {
+            ...TIP, displayColors: true,
+            callbacks: {
+              label: c => {
+                const tips = [
+                  'Im mniej — tym szybciej klienci płacą',
+                  'Im mniej — tym szybciej zapasy zamieniają się w gotówkę',
+                  'Im więcej — tym dłużej dostawcy finansują firmę',
+                  'Cały cykl — im krótszy tym lepiej'
+                ];
+                return ` ${c.dataset.label}: ${c.parsed.y} dni · ${tips[c.dataIndex]}`;
+              }
+            }
+          }
+        },
+        scales: { x: { grid: NG, border: NB }, y: { grid: SG, border: NB, ticks: { callback: v => v + ' dni' }, max: 100 } }
+      }
+    });
+  });
+}
+
+/* Slide 9: Margins */
+function buildChartMargins() {
+  initChart('cMargins', el => {
+    const data = DATA.calculated_metrics.profitability;
+    const p    = d => +(d * 100).toFixed(2);
+    return new Chart(el, {
+      type: 'line',
+      data: {
+        labels: data.map(d => String(d.year)),
+        datasets: [
+          { label: 'COGS % przychodów', data: data.map(d => p(d.cogs_pct_revenue)), borderColor: C.red, tension: 0, pointRadius: 5, pointBackgroundColor: C.red, borderDash: [5, 4], borderWidth: 2, yAxisID: 'y2' },
+          { label: 'Marża EBITDA',      data: data.map(d => p(d.ebitda_margin)),    borderColor: C.navy,  tension: 0, pointRadius: 5, pointBackgroundColor: C.navy,  borderWidth: 2,    yAxisID: 'y' },
+          { label: 'Marża netto',       data: data.map(d => p(d.net_margin)),       borderColor: C.amber, tension: 0, pointRadius: 5, pointBackgroundColor: C.amber, borderDash: [3, 3], borderWidth: 2, yAxisID: 'y' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, usePointStyle: true, font: { size: 10 } } },
+          tooltip: { ...TIP, displayColors: true, callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%` } }
+        },
+        scales: {
+          x:  { grid: NG, border: NB },
+          y:  { position: 'left',  grid: SG, border: NB, ticks: { callback: v => v.toFixed(0) + '%' }, title: { display: true, text: 'Marże', color: '#B0B8C4', font: { size: 10 } } },
+          y2: { position: 'right', grid: { display: false }, border: NB, ticks: { callback: v => v.toFixed(0) + '%' }, title: { display: true, text: 'COGS %', color: '#B0B8C4', font: { size: 10 } }, min: 70, max: 95 }
+        }
+      }
+    });
+  });
+}
+
+/* Slide index → chart builder */
+const CHART_MAP = {
+  2: buildChartEbitdaCfo,
+  3: buildChartWC,
+  4: buildChartBridge,
+  5: buildChartCFS,
+  6: buildChartCCC,
+  8: buildChartMargins
+};
+
+/* ─────────────────────────────────────────────
+   DOT NAVIGATION
+───────────────────────────────────────────── */
+function buildDots() {
+  const container = document.getElementById('dots');
+  SLIDES.forEach((name, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.title     = name;
+    dot.addEventListener('click', () => goTo(i));
+    container.appendChild(dot);
+  });
+}
+
+/* ─────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────── */
+let current  = 0;
+const deck   = document.getElementById('deck');
+const counter = document.getElementById('navCounter');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const progressEl = document.getElementById('progress');
+
+function goTo(n, fast = false) {
+  n = Math.max(0, Math.min(n, TOTAL - 1));
+  if (n === current && !fast) return;
+  current = n;
+  deck.style.transition = fast ? 'none' : 'transform .46s cubic-bezier(.4,0,.2,1)';
+  deck.style.transform  = `translateX(-${current * 100}vw)`;
+  updateNav();
+  const builder = CHART_MAP[current];
+  if (builder) requestAnimationFrame(() => requestAnimationFrame(builder));
+}
+
+function updateNav() {
+  counter.textContent       = `${current + 1} / ${TOTAL}`;
+  btnPrev.disabled          = current === 0;
+  btnNext.disabled          = current === TOTAL - 1;
+  progressEl.style.width    = (current / (TOTAL - 1) * 100) + '%';
+  document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === current));
+  document.querySelectorAll('.slide').forEach((s, i) => { s.style.opacity = i === current ? '1' : '0.6'; });
+}
+
+btnPrev.addEventListener('click', () => goTo(current - 1));
+btnNext.addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'PageUp')                    { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  if (e.key === 'End')  { e.preventDefault(); goTo(TOTAL - 1); }
+});
+
+/* Touch swipe */
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend',   e => {
+  const delta = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(delta) > 48) goTo(current + (delta > 0 ? 1 : -1));
+}, { passive: true });
+
+/* Wheel (throttled) */
+let lastWheel = 0;
+window.addEventListener('wheel', e => {
+  const now = Date.now();
+  if (now - lastWheel < 700) return;
+  lastWheel = now;
+  e.preventDefault();
+  goTo(current + (e.deltaY > 0 ? 1 : -1));
+}, { passive: false });
+
+/* ─────────────────────────────────────────────
+   WHAT-IF SIMULATOR (Slide 8)
+───────────────────────────────────────────── */
+function initSimulator() {
+  const is    = DATA.source_data.income_statement;
+  const lastY = is[is.length - 1];
+  const revPD = lastY.revenue / 365;   // ~203.9 tys./day
+  const cogPD = lastY.cogs    / 365;   // ~176.1 tys./day
+  const BASE  = { dso: 51, dio: 73, dpo: 56, ccc: 68 };
+
+  const dsoS = document.getElementById('dsoSlider');
+  const dioS = document.getElementById('dioSlider');
+  const dpoS = document.getElementById('dpoSlider');
+  if (!dsoS) return;
+
+  function update() {
+    const dso = +dsoS.value, dio = +dioS.value, dpo = +dpoS.value;
+
+    document.getElementById('dsoDisp').innerHTML = `${dso}<small>dni</small>`;
+    document.getElementById('dioDisp').innerHTML = `${dio}<small>dni</small>`;
+    document.getElementById('dpoDisp').innerHTML = `${dpo}<small>dni</small>`;
+
+    const newCCC   = dso + dio - dpo;
+    const deltaCCC = newCCC - BASE.ccc;
+    const dsoCash  = -(dso - BASE.dso) * revPD;
+    const dioCash  = -(dio - BASE.dio) * cogPD;
+    const dpoCash  =  (dpo - BASE.dpo) * cogPD;
+    const total    = dsoCash + dioCash + dpoCash;
+
+    document.getElementById('simCCC').textContent = newCCC;
+    const dEl = document.getElementById('simCCCd');
+    dEl.textContent = deltaCCC === 0 ? '— brak zmian —' : `${sgn(deltaCCC)}${deltaCCC} dni vs 2025`;
+    dEl.className   = 'sr-ccc-d ' + (deltaCCC < 0 ? 'up' : deltaCCC > 0 ? 'dn' : '');
+
+    const totEl = document.getElementById('simTotal');
+    totEl.textContent = `${sgn(total)}${fmt(Math.abs(Math.round(total)))} tys. PLN`;
+    totEl.className   = 'sr-imp-total ' + (total > 0 ? 'txt-pos' : total < 0 ? 'txt-neg' : '');
+
+    const fv = v => `${v >= 0 ? '+' : ''}${fmt(Math.round(v))} tys.`;
+    [['dso', dsoCash], ['dio', dioCash], ['dpo', dpoCash]].forEach(([k, val]) => {
+      const el = document.getElementById(k + 'Cash');
+      el.textContent = fv(val);
+      el.className   = 'sr-rv ' + (val > 0 ? 'txt-pos' : val < 0 ? 'txt-neg' : '');
+    });
+
+    const narr = document.getElementById('simNarr');
+    if (Math.abs(total) < 10) {
+      narr.textContent = 'Przesuń suwak, żeby zobaczyć wpływ na gotówkę firmy.';
+      narr.className   = 'sr-narr'; return;
+    }
+    const absT    = Math.round(Math.abs(total));
+    const drivers = [];
+    if (Math.abs(dsoCash) > 100) drivers.push(`${dso < BASE.dso ? 'skrócenie' : 'wydłużenie'} DSO o ${Math.abs(dso - BASE.dso)} dni`);
+    if (Math.abs(dioCash) > 100) drivers.push(`${dio < BASE.dio ? 'redukcja' : 'wzrost'} DIO o ${Math.abs(dio - BASE.dio)} dni`);
+    if (Math.abs(dpoCash) > 100) drivers.push(`${dpo > BASE.dpo ? 'wydłużenie' : 'skrócenie'} DPO o ${Math.abs(dpo - BASE.dpo)} dni`);
+    const drvTxt = drivers.length ? ` Główny czynnik: ${drivers.join(', ')}.` : '';
+
+    if (total > 0) {
+      narr.innerHTML = `Firma <strong>uwolniłaby ~${fmt(absT)} tys. PLN</strong> gotówki.${drvTxt} Pieniądze szybciej wracają na konto.`;
+      narr.className = 'sr-narr pos';
+    } else {
+      narr.innerHTML = `Firma <strong>zaabsorbowałaby ~${fmt(absT)} tys. PLN</strong> dodatkowej gotówki — co zmniejszyłoby płynność.${drvTxt}`;
+      narr.className = 'sr-narr neg';
+    }
+  }
+
+  dsoS.addEventListener('input', update);
+  dioS.addEventListener('input', update);
+  dpoS.addEventListener('input', update);
+  document.getElementById('simReset').addEventListener('click', () => {
+    dsoS.value = BASE.dso; dioS.value = BASE.dio; dpoS.value = BASE.dpo; update();
+  });
+  update();
+}
+
+/* ─────────────────────────────────────────────
+   GLOSSARY TOOLTIPS
+───────────────────────────────────────────── */
+const GLOSSARY = {
+  ebitda: 'EBITDA — zysk operacyjny przed odsetkami, podatkami i amortyzacją. Pokazuje potencjał operacyjny firmy, zanim odejmiemy koszty finansowania i zużycia majątku. Wysoka EBITDA ≠ gotówka na koncie.',
+  cfo:    'CFO — Cash Flow Operacyjny. Gotówka faktycznie wygenerowana z działalności bieżącej firmy. To co realnie wpływa na konto bankowe — nie to, co pokazuje rachunek zysków i strat.',
+  dso:    'DSO — Days Sales Outstanding. Ile dni średnio czekamy na zapłatę od klientów. Im wyższy DSO, tym więcej pieniędzy jest zamrożonych w należnościach zamiast być dostępnymi.',
+  dio:    'DIO — Days Inventory Outstanding. Ile dni towar siedzi w magazynie. Wysoki DIO oznacza dużo zamrożonej gotówki w zapasach.',
+  dpo:    'DPO — Days Payable Outstanding. Ile dni jesteśmy winni pieniądze dostawcom. Dłuższy DPO to de facto bezpłatny kredyt obrotowy.',
+  ccc:    'CCC — Cash Conversion Cycle (Cykl Konwersji Gotówki) = DSO + DIO − DPO. Ile dni mija od wydania gotówki (zakup towaru) do jej powrotu (zapłata klienta). Im niższy CCC, tym lepsza płynność.',
+  cfs:    'Cash Flow / Sprzedaż — ile groszy gotówki operacyjnej firma generuje z każdej złotówki przychodu. Wskaźnik jakości zysku: pokazuje czy zysk księgowy przekłada się na realną gotówkę.',
+};
+
+function initGlossary() {
+  const tip = document.getElementById('gl-tip');
+  if (!tip) return;
+  document.querySelectorAll('.gl').forEach(el => {
+    const key = el.dataset.gl;
+    const def = GLOSSARY[key];
+    if (!def) return;
+    el.addEventListener('mouseenter', ev => {
+      tip.textContent = def;
+      tip.style.display = 'block';
+      setTimeout(() => { tip.style.opacity = '1'; }, 10);
+    });
+    el.addEventListener('mousemove', ev => {
+      tip.style.left = Math.min(ev.clientX + 12, window.innerWidth - 280) + 'px';
+      tip.style.top  = (ev.clientY - 44) + 'px';
+    });
+    el.addEventListener('mouseleave', () => {
+      tip.style.opacity = '0';
+      setTimeout(() => { tip.style.display = 'none'; }, 200);
+    });
+  });
+}
+
+/* ─────────────────────────────────────────────
+   MAIN INIT
+───────────────────────────────────────────── */
+async function init() {
+  await loadData();
+  buildDots();
+  goTo(0, true);
+  initSimulator();
+  initGlossary();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

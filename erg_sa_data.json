@@ -1,0 +1,351 @@
+{
+  "metadata": {
+    "company": "ERG S.A.",
+    "analysis_type": "CFO cash-first analysis",
+    "period": "2023-2025",
+    "currency": "PLN",
+    "unit": "thousands",
+    "business_model": "manufacturing / polyethylene film producer",
+    "generated_at": "2026-05-05",
+    "notes": [
+      "COGS means cost of goods sold / koszt własny sprzedaży.",
+      "Cash Flow Sales is calculated using EBIT as a substitute for zysk ze sprzedaży.",
+      "CCR is not meaningful for years with negative or near-zero net profit."
+    ]
+  },
+  "source_data": {
+    "income_statement": [
+      {
+        "year": 2023,
+        "revenue": 94272,
+        "cogs": 76111,
+        "ebit": 3975,
+        "depreciation_amortization": 4745,
+        "ebitda": 8720,
+        "net_profit": 3199
+      },
+      {
+        "year": 2024,
+        "revenue": 73660,
+        "cogs": 63287,
+        "ebit": -821,
+        "depreciation_amortization": 4649,
+        "ebitda": 3828,
+        "net_profit": -653
+      },
+      {
+        "year": 2025,
+        "revenue": 74463,
+        "cogs": 64330,
+        "ebit": 552,
+        "depreciation_amortization": 4517,
+        "ebitda": 5069,
+        "net_profit": -67
+      }
+    ],
+    "cash_flow": [
+      {
+        "year": 2023,
+        "cfo": 6260
+      },
+      {
+        "year": 2024,
+        "cfo": -1128
+      },
+      {
+        "year": 2025,
+        "cfo": 6949
+      }
+    ],
+    "balance_sheet": [
+      {
+        "year": 2023,
+        "current_assets": 23738,
+        "inventory": 9258,
+        "receivables": 12644,
+        "cash": null,
+        "current_liabilities": 16020,
+        "trade_payables": 11496,
+        "total_assets": 74356,
+        "total_liabilities": 32944,
+        "equity": 41412
+      },
+      {
+        "year": 2024,
+        "current_assets": 23916,
+        "inventory": 14304,
+        "receivables": 9197,
+        "cash": 415,
+        "current_liabilities": 14266,
+        "trade_payables": 7872,
+        "total_assets": 70058,
+        "total_liabilities": 29303,
+        "equity": 40755
+      },
+      {
+        "year": 2025,
+        "current_assets": 25056,
+        "inventory": 12841,
+        "receivables": 10392,
+        "cash": 1823,
+        "current_liabilities": 14024,
+        "trade_payables": 9794,
+        "total_assets": 68514,
+        "total_liabilities": 27852,
+        "equity": 40662
+      }
+    ]
+  },
+  "calculated_metrics": {
+    "ebitda_cfo": [
+      {
+        "year": 2023,
+        "ebitda": 8720,
+        "cfo": 6260,
+        "cfo_to_ebitda": 0.72,
+        "interpretation": "Good conversion of EBITDA into operating cash flow."
+      },
+      {
+        "year": 2024,
+        "ebitda": 3828,
+        "cfo": -1128,
+        "cfo_to_ebitda": -0.29,
+        "interpretation": "Weak cash conversion; operating cash was drained."
+      },
+      {
+        "year": 2025,
+        "ebitda": 5069,
+        "cfo": 6949,
+        "cfo_to_ebitda": 1.37,
+        "interpretation": "Strong operating cash recovery above EBITDA."
+      }
+    ],
+    "working_capital": [
+      {
+        "year": 2023,
+        "receivables": 12644,
+        "inventory": 9258,
+        "trade_payables": 11496,
+        "kon": 10406,
+        "delta_kon": null
+      },
+      {
+        "year": 2024,
+        "receivables": 9197,
+        "inventory": 14304,
+        "trade_payables": 7872,
+        "kon": 15629,
+        "delta_kon": 5223
+      },
+      {
+        "year": 2025,
+        "receivables": 10392,
+        "inventory": 12841,
+        "trade_payables": 9794,
+        "kon": 13439,
+        "delta_kon": -2190
+      }
+    ],
+    "cash_flow_sales": [
+      {
+        "year": 2024,
+        "ebit": -821,
+        "delta_kon": 5223,
+        "cash_flow_sales": -6044,
+        "driver": "Inventory build-up and weaker EBIT drained cash."
+      },
+      {
+        "year": 2025,
+        "ebit": 552,
+        "delta_kon": -2190,
+        "cash_flow_sales": 2742,
+        "driver": "Working capital release turned Cash Flow Sales positive."
+      }
+    ],
+    "ccc": [
+      {
+        "year": 2024,
+        "dso_days": 46,
+        "dio_days": 82,
+        "dpo_days": 45,
+        "ccc_days": 83
+      },
+      {
+        "year": 2025,
+        "dso_days": 51,
+        "dio_days": 73,
+        "dpo_days": 56,
+        "ccc_days": 68
+      }
+    ],
+    "profitability": [
+      {
+        "year": 2023,
+        "cogs_pct_revenue": 0.807,
+        "ebitda_margin": 0.093,
+        "ebit_margin": 0.042,
+        "net_margin": 0.034
+      },
+      {
+        "year": 2024,
+        "cogs_pct_revenue": 0.859,
+        "ebitda_margin": 0.052,
+        "ebit_margin": -0.011,
+        "net_margin": -0.009
+      },
+      {
+        "year": 2025,
+        "cogs_pct_revenue": 0.864,
+        "ebitda_margin": 0.068,
+        "ebit_margin": 0.007,
+        "net_margin": -0.001
+      }
+    ],
+    "trend_yoy": [
+      {
+        "metric": "revenue",
+        "2024_vs_2023": -0.219,
+        "2025_vs_2024": 0.011
+      },
+      {
+        "metric": "cogs",
+        "2024_vs_2023": -0.168,
+        "2025_vs_2024": 0.016
+      },
+      {
+        "metric": "ebitda",
+        "2024_vs_2023": -0.561,
+        "2025_vs_2024": 0.324
+      },
+      {
+        "metric": "net_profit",
+        "2024_vs_2023": -1.204,
+        "2025_vs_2024": 0.897
+      }
+    ],
+    "liquidity_debt": [
+      {
+        "year": 2023,
+        "current_ratio": 1.48,
+        "quick_ratio": 0.9,
+        "cash_ratio": null,
+        "debt_to_equity": 0.79,
+        "debt_to_assets": 0.44,
+        "roa": 0.043,
+        "roe": 0.077
+      },
+      {
+        "year": 2024,
+        "current_ratio": 1.68,
+        "quick_ratio": 0.67,
+        "cash_ratio": 0.03,
+        "debt_to_equity": 0.72,
+        "debt_to_assets": 0.42,
+        "roa": -0.009,
+        "roe": -0.016
+      },
+      {
+        "year": 2025,
+        "current_ratio": 1.79,
+        "quick_ratio": 0.87,
+        "cash_ratio": 0.13,
+        "debt_to_equity": 0.69,
+        "debt_to_assets": 0.41,
+        "roa": -0.001,
+        "roe": -0.002
+      }
+    ],
+    "cfo_bridge_2025": [
+      {
+        "component": "EBITDA",
+        "value": 5069,
+        "type": "start"
+      },
+      {
+        "component": "Inventory reduction",
+        "value": 1463,
+        "type": "positive_driver"
+      },
+      {
+        "component": "Receivables increase",
+        "value": -1195,
+        "type": "negative_driver"
+      },
+      {
+        "component": "Payables increase",
+        "value": 1922,
+        "type": "positive_driver"
+      },
+      {
+        "component": "Other CFO adjustments / taxes / non-working-capital effects",
+        "value": -310,
+        "type": "reconciliation"
+      },
+      {
+        "component": "CFO",
+        "value": 6949,
+        "type": "end"
+      }
+    ],
+    "balance_check": [
+      {
+        "year": 2023,
+        "total_assets": 74356,
+        "liabilities_plus_equity": 74356,
+        "difference": 0,
+        "status": "OK"
+      },
+      {
+        "year": 2024,
+        "total_assets": 70058,
+        "liabilities_plus_equity": 70058,
+        "difference": 0,
+        "status": "OK"
+      },
+      {
+        "year": 2025,
+        "total_assets": 68514,
+        "liabilities_plus_equity": 68514,
+        "difference": 0,
+        "status": "OK"
+      }
+    ]
+  },
+  "flags": [
+    {
+      "metric": "Current Ratio 2023",
+      "flag": "warning",
+      "reason": "Below 1.5 threshold."
+    },
+    {
+      "metric": "DSO",
+      "flag": "negative",
+      "reason": "DSO increased from 46 to 51 days."
+    },
+    {
+      "metric": "DIO",
+      "flag": "positive",
+      "reason": "DIO improved from 82 to 73 days."
+    },
+    {
+      "metric": "DPO",
+      "flag": "positive",
+      "reason": "DPO increased from 45 to 56 days, improving supplier financing."
+    },
+    {
+      "metric": "CCC",
+      "flag": "positive",
+      "reason": "CCC shortened from 83 to 68 days."
+    },
+    {
+      "metric": "COGS % revenue",
+      "flag": "negative",
+      "reason": "COGS share of revenue increased to 86.4% in 2025."
+    },
+    {
+      "metric": "Net margin",
+      "flag": "negative",
+      "reason": "Net profitability remains near zero / negative."
+    }
+  ]
+}
