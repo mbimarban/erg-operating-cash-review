@@ -1,41 +1,50 @@
 # ERG Operating Cash Review
 
-Interactive operating cash flow review of ERG S.A. for 2023–2025.
+Interaktywna analiza przepływów pieniężnych ERG S.A. za lata 2023–2025.
 
-The project explains how a manufacturing company turns sales, inventory and supplier financing into operating cash flow.
+Projekt pokazuje, w jaki sposób spółka produkcyjna zamienia sprzedaż, zapasy i finansowanie od dostawców na realną gotówkę operacyjną.
 
-Live project:  
+Projekt online:  
 https://mbimarban.github.io/erg-operating-cash-review/
 
-## Purpose
+## Cel projektu
 
-This is not a traditional financial dashboard.
+To nie jest klasyczny dashboard finansowy.
 
-The goal is to translate financial statements into a simple business story:
+Celem projektu jest pokazanie w prostym języku biznesowym:
 
-- where cash was trapped,
-- how cash was released,
-- why EBITDA and operating cash flow can move differently,
-- whether the improvement in cash flow is sustainable.
+- gdzie utknęła gotówka,
+- dlaczego wróciła,
+- czym różni się EBITDA od realnej gotówki,
+- czy poprawa CFO jest trwała.
 
-The analysis is designed for business owners, managers and non-financial decision makers.
+Analiza została przygotowana dla:
+- właścicieli firm,
+- managerów,
+- osób biznesowych bez finansowego backgroundu.
 
-## Key idea
+## Główny wniosek
 
-In 2025 ERG improved operating cash flow, but the improvement was driven mainly by working capital release — especially inventory reduction and supplier financing — not by a structural improvement in profitability.
+W 2025 roku ERG poprawił przepływy operacyjne,
+ale poprawa wynikała głównie z uwolnienia kapitału obrotowego:
+- spadku zapasów,
+- dłuższego finansowania od dostawców,
+- poprawy cyklu gotówki,
 
-## What the project includes
+a nie z trwałej poprawy rentowności.
 
-- interactive slide-based HTML report,
-- CFO-first business narrative,
-- EBITDA vs operating cash flow comparison,
-- working capital analysis,
-- Cash Flow Sales logic,
-- CCC / DSO / DIO / DPO explanation,
-- simple what-if simulator,
-- margin and operational risk review.
+## Projekt zawiera
 
-## Repository structure
+- interaktywny raport HTML,
+- narrację CFO-first,
+- analizę EBITDA vs CFO,
+- analizę kapitału obrotowego,
+- Cash Flow Sales,
+- CCC / DSO / DIO / DPO,
+- prosty simulator „what-if”,
+- analizę marż i ryzyk operacyjnych.
+
+## Struktura repozytorium
 
 ```text
 /
